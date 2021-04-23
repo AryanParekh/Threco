@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 
 path="http://127.0.0.1:8000/"
 
+def home(request):
+    return render(request,'home.html')
+
 def adminlogin(request):
     if request.method=="GET":
         return render(request,'adminlogin.html')

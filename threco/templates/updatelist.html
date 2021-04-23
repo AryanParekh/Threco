@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{{company.name}} Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/popupform.css' %}" />
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta charset="utf-8" />
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <title>Data Tables</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+ 
+     <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" ></script>
+   <link rel="stylesheet" href="{% static 'css/table.css' %}">
+  </head>
+  <body>
+    <div id="id01" class="modal" style="display: none;">
+      <div class="wrapperx2">
+        <div class="wrapperx">
+          <span onclick="zindexchanger2()" class="close-span">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </span>
+          <div class="title">
+            Add an Update
+          </div>
+          <form method="post" class="form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="inputfield">
+              <label>Waste Category</label>
+              <div class="custom_select">
+                <select name="wastecategory">
+                  <option value="">Select</option>
+                  <option value="E Waste">E Waste</option>
+                  <option value="Paper">Paper</option>
+                  <option value="Plastic">Plastic</option>
+                  <option value="Metal">Metal</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+            </div>
+            <div class="inputfield">
+                <label>Waste Quantity</label>
+                <input name="wastequantity" type="number" class="input" min="1">
+            </div>
+            <div class="inputfield">
+                <label>Location</label>
+                <input name="location" type="text" class="input" >
+            </div>
+            <div class="inputfield">
+              <label>Status</label>
+              <div class="custom_select">
+                <select id="status" name="status" onchange="certificatedisplay()">
+                  <option value="">Select</option>
+                  <option value="In Process">In Process</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+            </div>
+            <div class="inputfield">
+                <label>Carbon Emission Saved</label>
+                <input name="ces" type="text" class="input" >
+            </div> 
+            <div class="inputfield">
+              <label>Certificate</label>
+              <input id="certificate" name="certificate" type="file" class="input" disabled>
+            </div>
+            <br>
+            <div class="inputfield">
+              <button id="submitbtn" type="submit" value="Register" class="btn">SUBMIT</button>
+            </div>
+          </form>
+        </div>
+      </div>	
+    </div>
+    <div id="divx">
+        <div id="wrap" class="folder">
+            <div class="container">
+                <img width="240px" src="{% static 'img/Logopng.webp' %}" alt=""><br><br>
+                <h2><b>{{company.name}}</b></h2>
+                <a style="float: left !important;text-decoration: none;" class="add" href="{% url 'companylist' %}">Back</a>
+                <button type="button" onclick="zindexchanger()" class="add">Add Update</button>
+                {% if error %}<p style="color: red;font-size: small;text-align: center;" class="section__title">{{error}}</p>{% endif %}
+                <br><br>
+                <table class="table table-fluid" id="myTable">
+                <thead>
+                <tr>
+                   <th>Sr.No</th>
+                   <th>Transaction ID</th>
+                   <th>Waste Category</th>
+                   <th>Waste Quantity</th>
+                   <th>Location</th>
+                   <th>Status</th>
+                   <th>Created At</th>
+               </tr>
+                </thead>
+                <tbody>
+                    {% for update in updates %}
+                    <tr>  
+                    <td data-label="Sr.No"><a href="{% url 'update_detail' update.id %}">{{forloop.counter}}</a></td>
+                    <td data-label="Transaction ID"><a href="{% url 'update_detail' update.id %}">{{update.transaction_id}}</a></td>
+                    <td data-label="Waste Category"><a href="{% url 'update_detail' update.id %}">{{update.waste_category}}</a></td>
+                    <td data-label="Waste Quantity"><a href="{% url 'update_detail' update.id %}">{{update.waste_quantity}}</a></td>
+                    <td data-label="Location"><a href="{% url 'update_detail' update.id %}">{{update.location}}</a></td>
+                    {% ifequal update.status 'Completed' %}
+                    <td data-label="Status"><a style="color: green;" href="{% url 'update_detail' update.id %}"><b>{{update.status}}</b></a></td>
+                    {% else %}
+                    <td data-label="Status"><a style="color: red;" href="{% url 'update_detail' update.id %}"><b>{{update.status}}</b></a></td>
+                    {% endifequal %}
+                    <td data-label="Created At"><a href="{% url 'update_detail' update.id %}">{{update.created_at.date}}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+         </div>
+    </div>
+    <br><br>
+  </body>
+<script>
+  function zindexchanger(){
+    document.getElementById('wrap').style.zIndex='99'
+    $('#divx').fadeOut();
+    document.getElementById('id01').style.display='block'
+    $('#id01').fadeIn();
+  }
+  function zindexchanger2(){
+    document.getElementById('id01').style.display='none'
+    $('#divx').fadeIn();
+    document.getElementById('wrap').style.zIndex='101'
+  }
+</script>
+<script>
+  function certificatedisplay(){
+    s=document.getElementById('status')
+    c=document.getElementById('certificate')
+    console.log(c)
+    if(s.value==='Completed'){
+      c.disabled=false
+    }
+    else{
+      c.disabled=true
+    }
+  }
+</script>
+<script>
+    $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
+</html>

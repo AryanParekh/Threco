@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{update.company.name}} - {{update.transaction_id}}</title>
+  <link rel="stylesheet" href="{% static 'css/clientupdate.css' %}" />
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current',{'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart(){
+            var data = google.visualization.arrayToDataTable([
+                ['Object','carbon Emission'],
+                ['Plastic Bottle',67.9],
+                ['Petrol',30.1],
+                ['Tree',2],
+             ],false);
+            var options={
+                title: "Predictions"
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('chart'));
+            chart.draw(data,options);
+
+        }
+    </script>
+</head>
+<body>
+<div class="flexdiv">
+    <div id="divx">
+    <div id="wrap" class="wrapperx2">
+        <br><br>
+        <div class="wrapperx">
+            <img src="{% static 'img/Logopng.webp' %}" alt=""><br>
+            <div class="title">
+                Details of <span style="color: red;">{{update.transaction_id}}</span>
+            </div>
+            <form class="form" enctype="multipart/form-data">
+            
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Client Name</b></label>
+                <p class="input">{{update.company.name}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Client ID</b></label>
+                <p class="input">{{update.company.user.username}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Waste Category</b></label>
+                <p class="input">{{update.waste_category}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Waste Quantity</b></label>
+                <p class="input">{{update.waste_quantity}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Location</b></label>
+                <p class="input">{{update.location}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Status</b></label>
+                <p class="input">{{update.status}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Carbon Emission Saved</b></label>
+                <p class="input">{{update.carbon_emission_saved}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Created At</b></label>
+                <p class="input">{{update.created_at}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Updated At</b></label>
+                <p class="input">{{update.updated_at}}</p>
+            </div>
+            <br>
+            </form>
+        </div>
+    </div>	
+    </div>
+    <div class="chartdiv">
+        <br><br>
+        <div id="certificate" class="wrapperx" style="width: 100%!important;">
+            <h3>Click Here to download the certificate</h3>
+            <br>
+            {% if update.certificate %}
+            <div class="inputfield">
+                <a style="text-decoration: none;position: center;" class="btn" href="{{update.certificate.url}}" download="{{update.heading}}">DOWNLOAD</a>
+            </div>
+            {% else %}
+            <div class="inputfield">
+                <a style="text-decoration: none;position: center;cursor:not-allowed;" class="btn" >Not Uploaded Yet</a>
+            </div>
+            {% endif %}
+        </div>
+        <div id="piechart" class="wrapperx">
+            <h3>Carbon Emission</h3>
+            <br>
+            <div id="chart">
+                
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+ <!DOCTYPE html>
+ {% load static %}
+ <html>
+ <head>
+     <meta charset="utf-8" />
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <title>{{company.name}} Dashboard</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+ 
+     <script
+   src="http://code.jquery.com/jquery-3.3.1.min.js"
+   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+   crossorigin="anonymous"></script>
+   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" ></script>
+   <link rel="stylesheet" href="{% static 'css/table.css' %}">
+ </head>
+ <body>
+ <div class="folder">
+    <div class="container">
+        <img src="{% static 'img/Logopng.webp' %}" alt=""><br><br>
+        <h2><b>{{company.name}}</b></h2>
+        <br><br>
+        <table class="table table-fluid" id="myTable">
+        <thead>
+        <tr>
+           <th>Sr.No</th>
+           <th>Transaction ID</th>
+           <th>Waste Category</th>
+           <th>Waste Quantity</th>
+           <th>Location</th>
+           <th>Status</th>
+           <th>Created At</th>
+       </tr>
+        </thead>
+        <tbody>
+            {% for update in updates %}
+            <tr>
+            <td data-label="Sr.No"><a href="{% url 'clientupdatedetail' update.id %}">{{forloop.counter}}</a></td>
+            <td data-label="Transaction ID"><a href="{% url 'clientupdatedetail' update.id %}">{{update.transaction_id}}</a></td>
+            <td data-label="Waste Category"><a href="{% url 'clientupdatedetail' update.id %}">{{update.waste_category}}</a></td>
+            <td data-label="Waste Quantity"><a href="{% url 'clientupdatedetail' update.id %}">{{update.waste_quantity}}</a></td>
+            <td data-label="Location"><a href="{% url 'clientupdatedetail' update.id %}">{{update.location}}</a></td>
+            {% ifequal update.status 'Completed' %}
+            <td data-label="Status"><a style="color: green;" href="{% url 'clientupdatedetail' update.id %}"><b>{{update.status}}</b></a></td>
+            {% else %}
+            <td data-label="Status"><a style="color: red;" href="{% url 'clientupdatedetail' update.id %}"><b>{{update.status}}</b></a></td>
+            {% endifequal %}
+            <td data-label="Created At"><a href="{% url 'clientupdatedetail' update.id %}">{{update.created_at.date}}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+ </div> 
+ <br><br>
+ <script>
+     $(document).ready( function () {
+     $('#myTable').DataTable();
+ } );
+     </script>
+ </body>
+ </html>

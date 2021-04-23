@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{update.company.name}} - {{update.transaction_id}}</title>
+  <link rel="stylesheet" href="{% static 'css/update.css' %}">
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<script>
+ function defaultprovider(){
+   w = document.getElementsByClassName('w')
+   st = document.getElementsByClassName('st')
+   c=document.getElementById('certificate')
+   if("Completed"==="{{update.status}}") c.disabled=false
+   for(var i=0;i<w.length;i++){
+     if(w[i].value==="{{update.waste_category}}"){
+       w[i].selected=true
+       break;
+     }
+   }
+   for(var i=0;i<st.length;i++){
+     if(st[i].value==="{{update.status}}"){
+       st[i].selected=true
+       break;
+     }
+   }
+ }
+</script>
+<body onload="defaultprovider()">
+<div id="id01" class="modal" style="display: none;z-index: 100;">
+    <div class="wrapperx2">
+        <br><br>
+        <div class="wrapperx">
+            <span onclick="zindexchanger2()" class="close-span">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </span>
+            <div style="text-align: center;margin-bottom: 10px;"><img width="240px" src="{% static 'img/Logopng.webp' %}" alt=""><br></div>
+            <div style="text-align: left;margin-bottom: 16px;">
+              <a class="backbtn" href="{% url 'updatelist' update.company.id%}">Back To Update List</a>
+            </div>
+            <div class="title">
+                Details of <span style="color: red;">{{update.transaction_id}}</span>
+            </div>
+            <form method="post" class="form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="inputfield">
+                <label>Client Name</label>
+                <input type="text" class="input" value="{{update.company.name}}" disabled>
+            </div>
+            <div class="inputfield">
+                <label>Client ID</label>
+                <input type="text" class="input" value="{{update.company.user.username}}" disabled>
+            </div>
+            <div class="inputfield">
+              <label>Waste Category</label>
+              <div class="custom_select">
+                <select id="" name="wastecategory">
+                  <option class="w" value="E Waste">E Waste</option>
+                  <option class="w" value="Paper">Paper</option>
+                  <option class="w" value="Plastic">Plastic</option>
+                  <option class="w" value="Metal">Metal</option>
+                  <option class="w" value="Others">Others</option>
+                </select>
+              </div>
+            </div>
+            <div class="inputfield">
+                <label>Waste Quantity</label>
+                <input name="wastequantity" type="number" class="input" value="{{update.waste_quantity}}" min="1">
+            </div>
+            <div class="inputfield">
+                <label>Location</label>
+                <input name="location" type="text" class="input" value="{{update.location}}">
+            </div>
+            <div class="inputfield">
+              <label>Status</label>
+              <div class="custom_select">
+                <select id="status" name="status" onchange="certificatedisplay()">
+                  <option class="st" value="In Process">In Process</option>
+                  <option class="st" value="Completed">Completed</option>
+                </select>
+              </div>
+            </div>
+            <div class="inputfield">
+                <label>Carbon Emission Saved</label>
+                <input name="ces" type="text" class="input" value="{{update.carbon_emission_saved}}">
+            </div>
+            <div class="inputfield">
+                <label>Certificate</label>
+                <input id="certificate" name="certificate" type="file" class="input" disabled>
+            </div>
+            <br>
+            <div class="inputfield">
+                <button id="submitbtn" type="submit" value="Register" class="btn">SUBMIT</button>
+            </div>
+            </form>
+        </div>
+    </div>	
+</div>
+<div id="divx">
+  <div id="wrap" class="wrapperx2">
+    <br><br>
+    <div class="wrapperx">
+        <span onclick="zindexchanger()" class="close-span">
+            <i class="fa fa-pencil" aria-hidden="true"></i>
+        </span>
+        <div style="text-align: center;margin-bottom: 10px;"><img width="240px" src="{% static 'img/Logopng.webp' %}" alt=""><br></div>
+        <div style="text-align: left;margin-bottom: 16px;">
+          <a class="backbtn" href="{% url 'updatelist' update.company.id%}">Back To Update List</a>
+        </div>
+        <div class="title">
+            Details of <span style="color: red;">{{update.transaction_id}}</span>
+        </div>
+        <form class="form" enctype="multipart/form-data">
+          {% if error %}
+          <div class="inputfield">
+            <span style="text-align: center;color: red;">{{error}}</span>
+          </div>
+          {% endif %}
+          {% if changes %}
+          <div style="text-align: center  !important;" class="inputfield">
+            <span style="text-align: center;color: green;">{{changes}}</span>
+          </div>
+          {% endif %}
+          <div class="inputfield">
+            <label>Client Name</label>
+            <p class="input">{{update.company.name}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Client ID</label>
+            <p class="input">{{update.company.user.username}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Waste Category</label>
+            <p class="input">{{update.waste_category}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Waste Quantity</label>
+            <p class="input">{{update.waste_quantity}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Location</label>
+            <p class="input">{{update.location}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Status</label>
+            <p class="input">{{update.status}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Carbon Emission Saved</label>
+            <p class="input">{{update.carbon_emission_saved}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Certificate</label>
+            {% if update.certificate %}
+            <a href="{{update.certificate.url}}" class="input">Click Here to view</a>
+            {% else %}
+            <p class="input">Not Uploaded</p>
+            {% endif %}
+          </div>
+          <div class="inputfield">
+            <label>Created At</label>
+            <p class="input">{{update.created_at}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Updated At</label>
+            <p class="input">{{update.updated_at}}</p>
+          </div>
+          <br>
+        </form>
+    </div>
+  </div>	
+</div>
+<script>
+  function certificatedisplay(){
+    s=document.getElementById('status')
+    c=document.getElementById('certificate')
+    console.log(c)
+    if(s.value==='Completed'){
+      c.disabled=false
+    }
+    else{
+      c.disabled=true
+    }
+  }
+</script>
+<script>
+    function zindexchanger(){
+      document.getElementById('wrap').style.zIndex='99'
+      $('#divx').fadeOut();
+      document.getElementById('id01').style.display='block'
+      $('#id01').fadeIn();
+    }
+    function zindexchanger2(){
+      document.getElementById('id01').style.display='none'
+      $('#divx').fadeIn();
+      document.getElementById('wrap').style.zIndex='101'
+    }
+  </script>
+</body>
+</html>

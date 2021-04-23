@@ -16,6 +16,7 @@
     /* padding: 0 10px; */
   }
   .modal{
+    display: none;
     z-index: 100;
     position: fixed center;
     padding: 0 10px;
@@ -258,12 +259,18 @@
     .title1{
       font-size: 40px;
     }
+    .wrapperx .title{
+      margin-bottom: 15px;
+    }
     .wrapperx .form .inputfield{
+      margin: 0;
+      margin-bottom: 2px;
       flex-direction: column;
       align-items: flex-start;
     }
     .wrapperx .form .inputfield label{
-      margin-bottom: 5px;
+      width: 100%;
+      margin-bottom: 2px;
     }
     .wrapperx .form .inputfield.terms{
       flex-direction: row;
@@ -271,6 +278,11 @@
     .wrapperx .form .inputfield2 p{
         width: 100%;
     }
+    .wrapperx .form .inputfield .input,
+  .wrapperx .form .inputfield .textarea{
+    font-size: 12px;
+    padding: 6px 8px;
+  }
   }
   
   /*SCROLLBAR*/

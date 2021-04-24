@@ -60,15 +60,15 @@ def companylist(request):
             elif password2=="":
                 error="Confirm Password is blank, Please fill the form again"
             if error!="":
-                return render(request,'companylist2.html',{"companies":companies,"error":error})
+                return render(request,'companylist.html',{"companies":companies,"error":error})
             if password!=password2:
-                return render(request,'companylist2.html',{"companies":companies,"error":"Password entered while confirming is different"})
+                return render(request,'companylist.html',{"companies":companies,"error":"Password entered while confirming is different"})
             try:
                 user = User.objects.create_user(username=username,password=password)
                 Company.objects.create(user=user,name=client_name)
             except:
-                return render(request,'companylist2.html',{"companies":companies,"error":"Error while adding company, please try again"})
-        return render(request,'companylist2.html',{"companies":companies})
+                return render(request,'companylist.html',{"companies":companies,"error":"Error while adding company, please try again"})
+        return render(request,'companylist.html',{"companies":companies})
 
     else:
         return redirect('adminlogin')
@@ -176,3 +176,23 @@ def clientupdatedetail(request,id):
     else:
         return redirect('clientlogin')
 
+
+
+
+
+# Random Update Generator Code :
+    # import random
+    # for i in range(25):
+    #     cat = ["E Waste","Paper","Plastic","Metal","Others"]
+    #     loc = ["Mumbai","Pune","Ahemdabad","Nashik","Sikkim"]
+    #     company = Company.objects.get(id=id)
+    #     u=Update.objects.create(
+    #                 company=company,
+    #                 waste_category=random.choice(cat),
+    #                 waste_quantity=random.randint(1,1000),
+    #                 location=random.choice(loc),
+    #                 status="In Process",
+    #                 carbon_emission_saved="-",
+    #             )
+    #     u.transaction_id="trc"+str(u.id)
+    #     u.save()

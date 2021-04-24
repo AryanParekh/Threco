@@ -86,7 +86,7 @@ def updatelist(request,id):
                 waste_quantity=int(waste_quantity)
             location = request.POST["location"]
             status = request.POST["status"]
-            carbon_emission_saved = request.POST["ces"]
+            carbon_emission_saved = request.POST.get("ces")
             certificate = request.FILES.get("certificate")
             error=""
             if waste_category=="":
@@ -97,13 +97,15 @@ def updatelist(request,id):
                 error="Location can't be blank"
             elif status=="":
                 error="Status can't be blank"
-            elif carbon_emission_saved=="":
+            elif status=="Completed" and carbon_emission_saved=="":
                 error="Carbon Emission Saved can't be blank"
             elif status=="Completed" and certificate is None:
                 error="Enter a certificate"
             
             if error!="":
                 return render(request,'updatelist.html',{"updates":updates,"company":company,"error":error})
+            if carbon_emission_saved is None:
+                carbon_emission_saved="-"
             u=Update.objects.create(
                 company=company,
                 waste_category=waste_category,
@@ -115,6 +117,7 @@ def updatelist(request,id):
             )
             u.transaction_id="trc"+str(u.id)
             u.save()
+            return render(request,'updatelist.html',{"updates":updates,"company":company,"success":u.transaction_id+" added successfully"})
         return render(request,'updatelist.html',{"updates":updates,"company":company})
     else:
         return redirect('adminlogin')
@@ -127,7 +130,7 @@ def update_detail(request,id):
             waste_quantity = int(request.POST["wastequantity"])
             location = request.POST["location"]
             status = request.POST["status"]
-            carbon_emission_saved = request.POST["ces"]
+            carbon_emission_saved = request.POST.get("ces")
             certificate = request.FILES.get("certificate")
             error=""
             if location=="":
@@ -150,6 +153,8 @@ def update_detail(request,id):
                 update.carbon_emission_saved=carbon_emission_saved
             if certificate is not None:
                 update.certificate=certificate
+            print(certificate)
+            print(carbon_emission_saved)
             update.save()
             return render(request,'update_detail.html',{"update":update,"changes":"Changes Saved Successfully"})
         return render(request,'update_detail.html',{"update":update})

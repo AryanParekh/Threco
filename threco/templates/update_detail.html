@@ -14,7 +14,11 @@
    w = document.getElementsByClassName('w')
    st = document.getElementsByClassName('st')
    c=document.getElementById('certificate')
-   if("Completed"==="{{update.status}}") c.disabled=false
+   cr=document.getElementById('ces')
+   if("Completed"==="{{update.status}}") {
+     c.disabled=false
+     cr.disabled=false
+   }
    for(var i=0;i<w.length;i++){
      if(w[i].value==="{{update.waste_category}}"){
        w[i].selected=true
@@ -85,7 +89,7 @@
             </div>
             <div class="inputfield">
                 <label>Carbon Emission Saved</label>
-                <input name="ces" type="text" class="input" value="{{update.carbon_emission_saved}}">
+                <input id="ces" name="ces" type="text" class="input" value="{{update.carbon_emission_saved}}" disabled>
             </div>
             <div class="inputfield">
                 <label>Certificate</label>
@@ -177,12 +181,14 @@
   function certificatedisplay(){
     s=document.getElementById('status')
     c=document.getElementById('certificate')
-    console.log(c)
+    cr=document.getElementById('ces')
     if(s.value==='Completed'){
       c.disabled=false
+      cr.disabled=false
     }
     else{
       c.disabled=true
+      cr.disabled=true
     }
   }
 </script>

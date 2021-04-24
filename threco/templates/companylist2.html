@@ -85,7 +85,7 @@
                     <td data-label="Sr.No"><a href="{% url 'updatelist' company.id %}">{{forloop.counter}}</a></td>
                     <td data-label="Client ID"><a href="{% url 'updatelist' company.id %}">{{company.name}}</a></td>
                     <td data-label="Client Name"><a href="{% url 'updatelist' company.id %}">{{company.user.username}}</a></td>
-                    <td data-label="Joining Date"><a href="{% url 'updatelist' company.id %}">{{company.user.date_joined.date}}</a></td>
+                    <td data-label="Joining Date"><a href="{% url 'updatelist' company.id %}">{{company.user.date_joined.date|date:"d-m-Y"}}</a></td>
                     {% endfor %}
                 </tbody>
                 </table>

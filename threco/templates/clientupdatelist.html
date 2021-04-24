@@ -50,7 +50,7 @@
             {% else %}
             <td data-label="Status"><a style="color: red;" href="{% url 'clientupdatedetail' update.id %}"><b>{{update.status}}</b></a></td>
             {% endifequal %}
-            <td data-label="Created At"><a href="{% url 'clientupdatedetail' update.id %}">{{update.created_at.date}}</a></td>
+            <td data-label="Created At"><a href="{% url 'clientupdatedetail' update.id %}">{{update.created_at.date|date:"d-m-Y"}}</a></td>
             </tr>
             {% endfor %}
         </tbody>

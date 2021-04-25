@@ -84,17 +84,22 @@ def updatelist(request,id):
                 waste_quantity=0
             else:
                 waste_quantity=int(waste_quantity)
-            location = request.POST["location"]
+            state = request.POST["state"]
+            district = request.POST.get("district")
             status = request.POST["status"]
             carbon_emission_saved = request.POST.get("ces")
             certificate = request.FILES.get("certificate")
+            print(state)
+            print(district)
             error=""
             if waste_category=="":
                 error="Waste Category can't be blank"
             elif waste_quantity<1:
                 error="Waste Quantity should be greater than 0"
-            elif location=="":
-                error="Location can't be blank"
+            elif state=="SELECT":
+                error="State can't be blank"
+            elif district is None or district=="":
+                error="District can't be blank"
             elif status=="":
                 error="Status can't be blank"
             elif status=="Completed" and carbon_emission_saved=="":
@@ -110,7 +115,8 @@ def updatelist(request,id):
                 company=company,
                 waste_category=waste_category,
                 waste_quantity=waste_quantity,
-                location=location,
+                state=state,
+                district=district,
                 status=status,
                 carbon_emission_saved=carbon_emission_saved,
                 certificate=certificate,
@@ -128,13 +134,16 @@ def update_detail(request,id):
         if request.method=="POST":
             waste_category = request.POST["wastecategory"]
             waste_quantity = int(request.POST["wastequantity"])
-            location = request.POST["location"]
+            state = request.POST["state"]
+            district = request.POST.get("district")
             status = request.POST["status"]
             carbon_emission_saved = request.POST.get("ces")
             certificate = request.FILES.get("certificate")
             error=""
-            if location=="":
-                error="Location can't be blank"
+            if district=="":
+                error="District can't be blank"
+            if state=="SELECT":
+                error="State can't be blank"
             if carbon_emission_saved=="":
                 error="Emission Saved can't be blank"
             
@@ -145,16 +154,16 @@ def update_detail(request,id):
                 update.waste_category=waste_category
             if waste_quantity is not None and waste_quantity>1:
                 update.waste_quantity=waste_quantity
-            if location is not None and location!="":
-                update.location=location
+            if state is not None and state!="":
+                update.state=state
+            if district is not None and district!="":
+                update.district=district
             if status is not None and status!="":
                 update.status=status
             if carbon_emission_saved is not None and carbon_emission_saved!="":
                 update.carbon_emission_saved=carbon_emission_saved
             if certificate is not None:
                 update.certificate=certificate
-            print(certificate)
-            print(carbon_emission_saved)
             update.save()
             return render(request,'update_detail.html',{"update":update,"changes":"Changes Saved Successfully"})
         return render(request,'update_detail.html',{"update":update})

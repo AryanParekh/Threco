@@ -32,7 +32,8 @@
            <th>Transaction ID</th>
            <th>Waste Category</th>
            <th>Waste Quantity</th>
-           <th>Location</th>
+           <th>State</th>
+           <th>District</th>
            <th>Status</th>
            <th>Created At</th>
        </tr>
@@ -44,7 +45,8 @@
             <td data-label="Transaction ID"><a href="{% url 'clientupdatedetail' update.id %}">{{update.transaction_id}}</a></td>
             <td data-label="Waste Category"><a href="{% url 'clientupdatedetail' update.id %}">{{update.waste_category}}</a></td>
             <td data-label="Waste Quantity"><a href="{% url 'clientupdatedetail' update.id %}">{{update.waste_quantity}}</a></td>
-            <td data-label="Location"><a href="{% url 'clientupdatedetail' update.id %}">{{update.location}}</a></td>
+            <td data-label="State"><a href="{% url 'clientupdatedetail' update.id %}">{{update.state}}</a></td>
+            <td data-label="District"><a href="{% url 'clientupdatedetail' update.id %}">{{update.district}}</a></td>
             {% ifequal update.status 'Completed' %}
             <td data-label="Status"><a style="color: green;" href="{% url 'clientupdatedetail' update.id %}"><b>{{update.status}}</b></a></td>
             {% else %}

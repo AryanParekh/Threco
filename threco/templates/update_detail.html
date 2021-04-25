@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="{% static 'css/update.css' %}">
   <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/JavaScript" src="{% static 'js/state.js' %}"></script>
 </head>
 <script>
  function defaultprovider(){
@@ -15,9 +16,17 @@
    st = document.getElementsByClassName('st')
    c=document.getElementById('certificate')
    cr=document.getElementById('ces')
+   states = document.getElementsByClassName('statechoice')
    if("Completed"==="{{update.status}}") {
      c.disabled=false
      cr.disabled=false
+   }
+   for(var i=0;i<states.length;i++){
+     if(states[i].value==="{{update.state}}"){
+       states[i].selected=true
+       selct_district(states[i].value)
+       break
+     }
    }
    for(var i=0;i<w.length;i++){
      if(w[i].value==="{{update.waste_category}}"){
@@ -76,7 +85,10 @@
             </div>
             <div class="inputfield">
                 <label>Location</label>
-                <input name="location" type="text" class="input" value="{{update.location}}">
+                <div style="display: flex;" class="input">
+                  <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
+                  <div class="custom_select"><select name="district" id='secondlist'></select></div>
+                </div>
             </div>
             <div class="inputfield">
               <label>Status</label>
@@ -146,7 +158,7 @@
           </div>
           <div class="inputfield">
             <label>Location</label>
-            <p class="input">{{update.location}}</p>
+            <p class="input">{{update.state}} - {{update.district}}</p>
           </div>
           <div class="inputfield">
             <label>Status</label>
@@ -198,6 +210,14 @@
       $('#divx').fadeOut();
       document.getElementById('id01').style.display='block'
       $('#id01').fadeIn();
+
+      districts = document.getElementsByClassName('districtchoice')
+      for(var i=0;i<districts.length;i++){
+        if(districts[i].value==="{{update.district}}"){
+          districts[i].selected=true
+          break
+        }
+      }
     }
     function zindexchanger2(){
       document.getElementById('id01').style.display='none'

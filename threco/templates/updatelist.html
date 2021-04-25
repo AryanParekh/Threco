@@ -23,6 +23,8 @@
    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" ></script>
    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+   <!-- <script language="Javascript" src="{% static 'js/jquery.js' %}"></script> -->
+    <script type="text/JavaScript" src="{% static 'js/state.js' %}"></script>
   </head>
   <body>
     <div id="id01" class="modal">
@@ -53,9 +55,12 @@
                 <label>Waste Quantity</label>
                 <input name="wastequantity" type="number" class="input" min="1">
             </div>
-            <div class="inputfield">
-                <label>Location</label>
-                <input name="location" type="text" class="input" >
+            <div class="inputfield" id="selection">
+              <label>Location</label>
+              <div style="display: flex;" class="input">
+                <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
+                <div class="custom_select"><select name="district" id='secondlist'></select></div>
+              </div>
             </div>
             <div class="inputfield">
               <label>Status</label>
@@ -99,7 +104,8 @@
                    <th>Transaction ID</th>
                    <th>Waste Category</th>
                    <th>Waste Quantity</th>
-                   <th>Location</th>
+                   <th>State</th>
+                   <th>District</th>
                    <th>Status</th>
                    <th>Created At</th>
                </tr>
@@ -111,7 +117,8 @@
                     <td data-label="Transaction ID"><a href="{% url 'update_detail' update.id %}">{{update.transaction_id}}</a></td>
                     <td data-label="Waste Category"><a href="{% url 'update_detail' update.id %}">{{update.waste_category}}</a></td>
                     <td data-label="Waste Quantity"><a href="{% url 'update_detail' update.id %}">{{update.waste_quantity}}</a></td>
-                    <td data-label="Location"><a href="{% url 'update_detail' update.id %}">{{update.location}}</a></td>
+                    <td data-label="State"><a href="{% url 'update_detail' update.id %}">{{update.state}}</a></td>
+                    <td data-label="District"><a href="{% url 'update_detail' update.id %}">{{update.district}}</a></td>
                     {% ifequal update.status 'Completed' %}
                     <td data-label="Status"><a style="color: green;" href="{% url 'update_detail' update.id %}"><b>{{update.status}}</b></a></td>
                     {% else %}

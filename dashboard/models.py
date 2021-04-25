@@ -31,8 +31,6 @@ class Company(models.Model):
 class Update(models.Model):
     transaction_id = models.CharField(max_length=20)
     company = models.ForeignKey(Company,on_delete=models.CASCADE)
-    waste_category = models.CharField(max_length=12,choices=WASTE_CATEGORY_CHOICES)
-    waste_quantity = models.IntegerField()
     state = models.CharField(max_length=200)
     district = models.CharField(max_length=200)
     status = models.CharField(max_length=12,choices=STATUS_CHOICES)
@@ -43,6 +41,12 @@ class Update(models.Model):
 
     def __str__(self):
         return str(self.company)+" - "+str(self.transaction_id)
+
+class UpdateWaste(models.Model):
+    update = models.ForeignKey(Update,on_delete=models.CASCADE)
+    waste_category = models.CharField(max_length=12,choices=WASTE_CATEGORY_CHOICES)
+    waste_quantity = models.IntegerField()
+
 
 
 

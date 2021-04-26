@@ -221,8 +221,8 @@ def update_detail(request,id):
 def clientupdatelist(request):
     if request.user.is_authenticated and request.user.is_superuser is not True:
         company = Company.objects.get(user=request.user)
-        updates = Update.objects.filter(company=company)
-        sub_updates = UpdateWaste.objects.filter(update__company__id=company.id)
+        updates = Update.objects.filter(company=company).order_by('-id')
+        sub_updates = UpdateWaste.objects.filter(update__company__id=company.id).order_by('-id')
         wastepie = [['Waste','Carbon Emission Saved']]
         statuspie = [["Status","No. of Updates"]]
         from django.db.models import Count
@@ -247,7 +247,10 @@ def clientupdatedetail(request,id):
         sub_updates = UpdateWaste.objects.filter(update__id=id)
         subwastepie = [["Category","Carbon Emission"]]
         for i in sub_updates:
-            subwastepie.append([i.waste_category,i.waste_quantity-i.carbon_emission_saved])
+            if i.carbon_emission_saved is not None:
+                subwastepie.append([i.waste_category,i.waste_quantity-i.carbon_emission_saved])
+            else:
+                subwastepie.append([i.waste_category,i.waste_quantity])
         return render(request,'clientupdatedetail.html',{"update":update,"sub_updates":sub_updates,"subwastepie":subwastepie})
     else:
         return redirect('clientlogin')

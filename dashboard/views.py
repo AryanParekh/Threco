@@ -245,7 +245,7 @@ def clientupdatedetail(request,id):
     if request.user.is_authenticated and request.user.is_superuser is not True:
         update = Update.objects.get(id=id)
         sub_updates = UpdateWaste.objects.filter(update__id=id)
-        subwastepie = [["Category","Carbon Emission"]]
+        subwastepie = [["Category","Carbon Emission Saved"]]
         for i in sub_updates:
             if i.carbon_emission_saved is not None:
                 subwastepie.append([i.waste_category,i.carbon_emission_saved])

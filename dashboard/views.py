@@ -248,9 +248,9 @@ def clientupdatedetail(request,id):
         subwastepie = [["Category","Carbon Emission"]]
         for i in sub_updates:
             if i.carbon_emission_saved is not None:
-                subwastepie.append([i.waste_category,i.waste_quantity-i.carbon_emission_saved])
+                subwastepie.append([i.waste_category,i.carbon_emission_saved])
             else:
-                subwastepie.append([i.waste_category,i.waste_quantity])
+                subwastepie.append([i.waste_category,0])
         return render(request,'clientupdatedetail.html',{"update":update,"sub_updates":sub_updates,"subwastepie":subwastepie})
     else:
         return redirect('clientlogin')

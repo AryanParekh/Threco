@@ -15,11 +15,16 @@
    w = document.getElementsByClassName('w')
    st = document.getElementsByClassName('st')
    c=document.getElementById('certificate')
-   cr=document.getElementById('ces')
+   ca=document.getElementsByClassName('CE')
    states = document.getElementsByClassName('statechoice')
    if("Completed"==="{{update.status}}") {
      c.disabled=false
-     cr.disabled=false
+     for(var i=0;i<ca.length;i++){
+        ca[i].disabled=false
+        p = ca[i].id.replace("CE","")
+        q=document.getElementById(p)
+        ca[i].max=q.value
+      }
    }
    for(var i=0;i<states.length;i++){
      if(states[i].value==="{{update.state}}"){
@@ -67,22 +72,27 @@
                 <label>Client ID</label>
                 <input type="text" class="input" value="{{update.company.user.username}}" disabled>
             </div>
-            <div class="inputfield">
-              <label>Waste Category</label>
-              <div class="custom_select">
-                <select id="" name="wastecategory">
-                  <option class="w" value="E Waste">E Waste</option>
-                  <option class="w" value="Paper">Paper</option>
-                  <option class="w" value="Plastic">Plastic</option>
-                  <option class="w" value="Metal">Metal</option>
-                  <option class="w" value="Others">Others</option>
-                </select>
+            <div class="inputfield4">
+              <label style="width: 50%;">
+                <span style="width: 100%;margin-right: 3px;">Waste Details:</span>
+              </label>
+              <div style="display: flex;width: 100%;">
+              <p style="margin-right: 3px;" class="input">Quantity</p>
+              <p style="margin-right: 3px;" class="input">C.E.S</p>
               </div>
             </div>
-            <div class="inputfield">
-                <label>Waste Quantity</label>
-                <input name="wastequantity" type="number" class="input" value="{{update.waste_quantity}}" min="1">
+            {% for sub_update in sub_updates %}
+            <div class="inputfield4">
+              <label style="width: 50%;">
+                <span style="color:#074c74;width: 100%;margin-right: 3px;">
+                  <input onclick="enabledisable(this)" name="{{sub_update.waste_category}}-check" class="wastechecks" type="checkbox">&nbsp;&nbsp;{{sub_update.waste_category}}</span>
+              </label>
+              <div style="display: flex;width: 100%;">
+              <input onchange="updateces(this)" style="margin-right: 3px;" id="{{sub_update.waste_category}}-quantity" name="{{sub_update.waste_category}}-quantity" type="number" class="input" min="1" value="{{sub_update.waste_quantity}}" disabled>
+              <input id="{{sub_update.waste_category}}-quantityCE" name="{{sub_update.waste_category}}-quantityCE" type="number" class="input CE" min="0" value="{{sub_update.carbon_emission_saved}}" disabled>
+              </div>
             </div>
+            {% endfor %}
             <div class="inputfield">
                 <label>Location</label>
                 <div style="display: flex;" class="input">
@@ -98,10 +108,6 @@
                   <option class="st" value="Completed">Completed</option>
                 </select>
               </div>
-            </div>
-            <div class="inputfield">
-                <label>Carbon Emission Saved</label>
-                <input id="ces" name="ces" type="text" class="input" value="{{update.carbon_emission_saved}}" disabled>
             </div>
             <div class="inputfield">
                 <label>Certificate</label>
@@ -149,13 +155,23 @@
             <p class="input">{{update.company.user.username}}</p>
           </div>
           <div class="inputfield">
-            <label>Waste Category</label>
-            <p class="input">{{update.waste_category}}</p>
+            <label>Waste Details</label>
+            <div style="display: flex;"  class="input">
+                <p style="margin-right: 2px;" class="input"><b>Category</b></p>
+                <p style="margin-right: 2px;" class="input"><b>Quantity</b></p>
+                <p class="input"><b>C.E.S.</b></p>
+            </div>
           </div>
+          {% for sub_update in sub_updates %}
           <div class="inputfield">
-            <label>Waste Quantity</label>
-            <p class="input">{{update.waste_quantity}}</p>
+              <label></label>
+              <div style="display: flex;"  class="input">
+              <p style="margin-right: 2px;" class="input"><span style="color: #0369a5;"><b>{{sub_update.waste_category}}</b></span></p>
+              <p style="margin-right: 2px;" class="input">{{sub_update.waste_quantity}}</p>
+              <p class="input">{{sub_update.carbon_emission_saved}}</p>
+              </div>
           </div>
+          {% endfor %}
           <div class="inputfield">
             <label>Location</label>
             <p class="input">{{update.state}} - {{update.district}}</p>
@@ -163,10 +179,6 @@
           <div class="inputfield">
             <label>Status</label>
             <p class="input">{{update.status}}</p>
-          </div>
-          <div class="inputfield">
-            <label>Carbon Emission Saved</label>
-            <p class="input">{{update.carbon_emission_saved}}</p>
           </div>
           <div class="inputfield">
             <label>Certificate</label>
@@ -193,14 +205,21 @@
   function certificatedisplay(){
     s=document.getElementById('status')
     c=document.getElementById('certificate')
-    cr=document.getElementById('ces')
+    ca=document.getElementsByClassName('CE')
     if(s.value==='Completed'){
       c.disabled=false
-      cr.disabled=false
+      for(var i=0;i<ca.length;i++){
+        ca[i].disabled=false
+        p = ca[i].id.replace("CE","")
+        q=document.getElementById(p)
+        ca[i].max=q.value
+      }
     }
     else{
       c.disabled=true
-      cr.disabled=true
+      for(var i=0;i<ca.length;i++){
+        ca[i].disabled=true
+      }
     }
   }
 </script>
@@ -223,6 +242,25 @@
       document.getElementById('id01').style.display='none'
       $('#divx').fadeIn();
       document.getElementById('wrap').style.zIndex='101'
+    }
+  </script>
+  <script>
+    function enabledisable(x){
+      waste = x.name.split("-")[0]
+      waste+="-quantity"
+      waste_quantity = document.getElementById(waste)
+      if (x.checked){
+        waste_quantity.disabled=false
+      }
+      else{
+        waste_quantity.disabled=true
+      }
+    }
+  </script>
+  <script>
+    function updateces(x){
+      y=document.getElementById(x.id+"CE")
+      y.max=x.value
     }
   </script>
 </body>

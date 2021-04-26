@@ -25,6 +25,32 @@
    <link rel="stylesheet" href="{% static 'css/table.css' %}">
    <!-- <script language="Javascript" src="{% static 'js/jquery.js' %}"></script> -->
     <script type="text/JavaScript" src="{% static 'js/state.js' %}"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current',{'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawChart2);
+
+        function drawChart(){
+            var x = {{statuspie|safe}}
+            var data = google.visualization.arrayToDataTable(x,false);
+            var options={
+                title: "Predictions"
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('chart1'));
+            chart.draw(data,options);
+
+        }
+        function drawChart2(){
+            var x = {{wastepie|safe}}
+            var data = google.visualization.arrayToDataTable(x,false);
+            var options={
+                title: "Carbon Emission Saved"
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('chart2'));
+            chart.draw(data,options);
+        }
+    </script>
   </head>
   <body>
     <div id="id01" class="modal">
@@ -38,26 +64,68 @@
           </div>
           <form method="post" class="form" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="inputfield">
-              <label>Waste Category</label>
-              <div class="custom_select">
-                <select name="wastecategory">
-                  <option value="">Select</option>
-                  <option value="E Waste">E Waste</option>
-                  <option value="Paper">Paper</option>
-                  <option value="Plastic">Plastic</option>
-                  <option value="Metal">Metal</option>
-                  <option value="Others">Others</option>
-                </select>
+            <div class="inputfield4">
+              <label style="width: 50%;">
+                <span style="color:#074c74;width: 100%;margin-right: 3px;"></span>
+              </label>
+              <div style="display: flex;width: 100%;">
+              <p style="margin-right: 3px;" class="input">Quantity</p>
+              <p style="margin-right: 3px;" class="input">C.E.S</p>
               </div>
             </div>
-            <div class="inputfield">
-                <label>Waste Quantity</label>
-                <input name="wastequantity" type="number" class="input" min="1">
+            <div class="inputfield4">
+              <label style="width: 50%;">
+                <span style="color:#074c74;width: 100%;margin-right: 3px;">
+                  <input onclick="enabledisable(this)" name="E Waste-check" class="wastechecks" type="checkbox">&nbsp;&nbsp;E Waste</span>
+              </label>
+              <div style="display: flex;width: 100%;">
+              <input onkeyup="updateces(this)" style="margin-right: 3px;" id="E Waste-quantity" name="E Waste-quantity" type="number" class="input" min="1" disabled>
+              <input id="E Waste-quantityCE" name="E Waste-quantityCE" type="number" class="input CE" min="0" disabled>
+              </div>
+            </div>
+            <div class="inputfield4">
+              <label style="width: 50%;">
+                <span style="color:#074c74;width: 100%;margin-right: 3px;">
+                  <input onclick="enabledisable(this)" name="Plastic-check" class="wastechecks" type="checkbox">&nbsp;&nbsp;Plastic</span>
+              </label>
+              <div style="display: flex;width: 100%;">
+              <input onkeyup="updateces(this)" style="margin-right: 3px;" id="Plastic-quantity" name="Plastic-quantity" type="number" class="input" min="1" disabled>
+              <input id="Plastic-quantityCE" name="Plastic-quantityCE" type="number" class="input CE" min="0" disabled>
+              </div>
+            </div>
+            <div class="inputfield4">
+              <label style="width: 50%;">
+                <span style="color:#074c74;width: 100%;margin-right: 3px;">
+                  <input onclick="enabledisable(this)" name="Paper-check" class="wastechecks" type="checkbox">&nbsp;&nbsp;Paper</span>
+              </label>
+              <div style="display: flex;width: 100%;">
+              <input onkeyup="updateces(this)" style="margin-right: 3px;" id="Paper-quantity" name="Paper-quantity" type="number" class="input" min="1" disabled>
+              <input id="Paper-quantityCE" name="Paper-quantityCE" type="number" class="input CE" min="0" disabled>
+              </div>
+            </div>
+            <div class="inputfield4">
+              <label style="width: 50%;">
+                <span style="color:#074c74;width: 100%;margin-right: 3px;">
+                  <input onclick="enabledisable(this)" name="Metal-check" class="wastechecks" type="checkbox">&nbsp;&nbsp;Metal</span>
+              </label>
+              <div style="display: flex;width: 100%;">
+              <input onkeyup="updateces(this)" style="margin-right: 3px;" id="Metal-quantity" name="Metal-quantity" type="number" class="input" min="1" disabled>
+              <input id="Metal-quantityCE" name="Metal-quantityCE" type="number" class="input CE" min="0" disabled>
+              </div>
+            </div>
+            <div class="inputfield4">
+              <label style="width: 50%;">
+                <span style="color:#074c74;width: 100%;margin-right: 3px;">
+                  <input onclick="enabledisable(this)" name="Others-check" class="wastechecks" type="checkbox">&nbsp;&nbsp;Others</span>
+              </label>
+              <div style="display: flex;width: 100%;">
+              <input onkeyup="updateces(this)" style="margin-right: 3px;" id="Others-quantity" name="Others-quantity" type="number" class="input" min="1" disabled>
+              <input id="Others-quantityCE" name="Others-quantityCE" type="number" class="input CE" min="0" disabled>
+              </div>
             </div>
             <div class="inputfield" id="selection">
               <label>Location</label>
-              <div style="display: flex;" class="input">
+              <div style="display: flex;margin:0;width: 100%;">
                 <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
                 <div class="custom_select"><select name="district" id='secondlist'></select></div>
               </div>
@@ -72,10 +140,10 @@
                 </select>
               </div>
             </div>
-            <div class="inputfield">
+            <!-- <div class="inputfield">
                 <label>Carbon Emission Saved</label>
                 <input id="ces" name="ces" type="text" class="input" disabled>
-            </div> 
+            </div>  -->
             <div class="inputfield">
               <label>Certificate</label>
               <input id="certificate" name="certificate" type="file" class="input" disabled>
@@ -88,14 +156,30 @@
       </div>	
     </div>
     <div id="divx">
+        <div class="folder">
+          <div class="container">
+            <img width="240px" src="{% static 'img/Logopng.webp' %}" alt=""><br><br>
+            <h2><b>{{company.name}}</b></h2>
+            {% if success %}<p style="color: green;font-size: small;text-align: center;" class="section__title">{{success}}</p>{% endif %}
+            {% if error %}<p style="color: red;font-size: small;text-align: center;" class="section__title">{{error}}</p>{% endif %}
+            <br>
+          </div>
+        </div>
+        <div class="chartdiv container">
+          <div class="wrapperx x">
+            <h5>Status Pie Chart</h5>
+            <div class="chart" id="chart1"></div>
+          </div>
+          <div class="wrapperx">
+            <h5>Waste Category Pie Chart</h5>
+            <div class="chart" id="chart2"></div>
+          </div>
+        </div>
         <div id="wrap" class="folder">
             <div class="container">
-                <img width="240px" src="{% static 'img/Logopng.webp' %}" alt=""><br><br>
-                <h2><b>{{company.name}}</b></h2>
+                <!-- <h2><b>{{company.name}}</b></h2> -->
                 <a style="float: left !important;text-decoration: none;" class="add" href="{% url 'companylist' %}">Back</a>
                 <button type="button" onclick="zindexchanger()" class="add">Add Update</button>
-                {% if success %}<p style="color: green;font-size: small;text-align: center;" class="section__title">{{success}}</p>{% endif %}
-                {% if error %}<p style="color: red;font-size: small;text-align: center;" class="section__title">{{error}}</p>{% endif %}
                 <br><br>
                 <table class="table table-fluid" id="myTable">
                 <thead>
@@ -111,20 +195,20 @@
                </tr>
                 </thead>
                 <tbody>
-                    {% for update in updates %}
+                    {% for sub_update in sub_updates %}
                     <tr>  
-                    <td data-label="Sr.No"><a href="{% url 'update_detail' update.id %}">{{forloop.counter}}</a></td>
-                    <td data-label="Transaction ID"><a href="{% url 'update_detail' update.id %}">{{update.transaction_id}}</a></td>
-                    <td data-label="Waste Category"><a href="{% url 'update_detail' update.id %}">{{update.waste_category}}</a></td>
-                    <td data-label="Waste Quantity"><a href="{% url 'update_detail' update.id %}">{{update.waste_quantity}}</a></td>
-                    <td data-label="State"><a href="{% url 'update_detail' update.id %}">{{update.state}}</a></td>
-                    <td data-label="District"><a href="{% url 'update_detail' update.id %}">{{update.district}}</a></td>
-                    {% ifequal update.status 'Completed' %}
-                    <td data-label="Status"><a style="color: green;" href="{% url 'update_detail' update.id %}"><b>{{update.status}}</b></a></td>
+                    <td data-label="Sr.No"><a href="{% url 'update_detail' sub_update.update.id %}">{{forloop.counter}}</a></td>
+                    <td data-label="Transaction ID"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.update.transaction_id}}</a></td>
+                    <td data-label="Waste Category"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.waste_category}}</a></td>
+                    <td data-label="Waste Quantity"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.waste_quantity}}</a></td>
+                    <td data-label="State"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.update.state}}</a></td>
+                    <td data-label="District"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.update.district}}</a></td>
+                    {% ifequal sub_update.update.status 'Completed' %}
+                    <td data-label="Status"><a style="color: green;" href="{% url 'update_detail' sub_update.update.id %}"><b>{{sub_update.update.status}}</b></a></td>
                     {% else %}
-                    <td data-label="Status"><a style="color: red;" href="{% url 'update_detail' update.id %}"><b>{{update.status}}</b></a></td>
+                    <td data-label="Status"><a style="color: red;" href="{% url 'update_detail' sub_update.update.id %}"><b>{{sub_update.update.status}}</b></a></td>
                     {% endifequal %}
-                    <td data-label="Created At"><a href="{% url 'update_detail' update.id %}">{{update.created_at.date|date:"d-m-Y"}}</a></td>
+                    <td data-label="Created At"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.update.created_at.date|date:"d-m-Y"}}</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -151,14 +235,21 @@
   function certificatedisplay(){
     s=document.getElementById('status')
     c=document.getElementById('certificate')
-    ca=document.getElementById('ces')
+    ca=document.getElementsByClassName('CE')
     if(s.value==='Completed'){
       c.disabled=false
-      ca.disabled=false
+      for(var i=0;i<ca.length;i++){
+        ca[i].disabled=false
+        p = ca[i].id.replace("CE","")
+        q=document.getElementById(p)
+        ca[i].max=q.value
+      }
     }
     else{
       c.disabled=true
-      ca.disabled=true
+      for(var i=0;i<ca.length;i++){
+        ca[i].disabled=true
+      }
     }
   }
 </script>
@@ -166,5 +257,24 @@
     $(document).ready( function () {
     $('#myTable').DataTable();
 } );
+</script>
+<script>
+  function enabledisable(x){
+    waste = x.name.split("-")[0]
+    waste+="-quantity"
+    waste_quantity = document.getElementById(waste)
+    if (x.checked){
+      waste_quantity.disabled=false
+    }
+    else{
+      waste_quantity.disabled=true
+    }
+  }
+</script>
+<script>
+  function updateces(x){
+    y=document.getElementById(x.id+"CE")
+    y.max=x.value
+  }
 </script>
 </html>

@@ -73,7 +73,37 @@
   .wrapperx .form{
     width: 100%;
   }
-  
+  .wrapperx .form .inputfield4{
+    width: 100%;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+  }
+  .wrapperx .form .inputfield4 label{
+    width: 40%;
+    color: #052517;
+    margin-right: 10px;
+   font-size: 15px;
+ }
+ .wrapperx .form .inputfield4 .input{
+    width: 100%;
+    outline: none;
+    border: 1px solid rgba(23, 22, 54, 0.952);
+    font-size: 15px;
+    padding: 8px 10px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  }
+  .wrapperx .form .inputfield4 .check input[type="checkbox"]{
+    /* position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1; */
+    width: 15px;
+    height: 15px;
+    border: 1px solid black;
+    display: block;
+  }
   .wrapperx .form .inputfield{
     width: 100%;
     margin-bottom: 15px;
@@ -275,6 +305,9 @@
   @media (max-width:450px) {
     .title1{
       font-size: 40px;
+    }
+    .wrapperx .form .inputfield4{
+      margin-bottom: 5px;
     }
     .wrapperx .form .inputfield{
       flex-direction: column;

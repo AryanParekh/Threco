@@ -14,12 +14,8 @@
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart(){
-            var data = google.visualization.arrayToDataTable([
-                ['Object','carbon Emission'],
-                ['Plastic Bottle',67.9],
-                ['Petrol',30.1],
-                ['Tree',2],
-             ],false);
+            var x = {{subwastepie|safe}}
+            var data = google.visualization.arrayToDataTable(x,false);
             var options={
                 title: "Predictions"
             };
@@ -50,13 +46,23 @@
                 <p class="input">{{update.company.user.username}}</p>
             </div>
             <div class="inputfield">
-                <label><b style="color:#074c74;">Waste Category</b></label>
-                <p class="input">{{update.waste_category}}</p>
+                <label><b style="color:#074c74;">Waste Details</b></label>
+                <div style="display: flex;"  class="input">
+                    <p style="margin-right: 2px;" class="input"><b>Category</b></p>
+                    <p style="margin-right: 2px;" class="input"><b>Quantity</b></p>
+                    <p class="input"><b>C.E.S.</b></p>
+                </div>
             </div>
+            {% for sub_update in sub_updates %}
             <div class="inputfield">
-                <label><b style="color:#074c74;">Waste Quantity</b></label>
-                <p class="input">{{update.waste_quantity}}</p>
+                <label></label>
+                <div style="display: flex;"  class="input">
+                <p style="margin-right: 2px;" class="input"><span style="color: #0369a5;"><b>{{sub_update.waste_category}}</b></span></p>
+                <p style="margin-right: 2px;" class="input">{{sub_update.waste_quantity}}</p>
+                <p class="input">{{sub_update.carbon_emission_saved}}</p>
+                </div>
             </div>
+            {% endfor %}
             <div class="inputfield">
                 <label><b style="color:#074c74;">Location</b></label>
                 <p class="input">{{update.state}} - {{update.district}}</p>
@@ -64,10 +70,6 @@
             <div class="inputfield">
                 <label><b style="color:#074c74;">Status</b></label>
                 <p class="input">{{update.status}}</p>
-            </div>
-            <div class="inputfield">
-                <label><b style="color:#074c74;">Carbon Emission Saved</b></label>
-                <p class="input">{{update.carbon_emission_saved}}</p>
             </div>
             <div class="inputfield">
                 <label><b style="color:#074c74;">Created At</b></label>

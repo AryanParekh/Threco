@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
-from dashboard.models import Company,Update
+from dashboard.models import Company,Update,UpdateWaste
 from django.contrib.auth.models import User
 # Create your views here.
 
-path="http://127.0.0.1:8000/"
+WASTES = ["E Waste","Plastic","Paper","Metal","Others"]
 
 def home(request):
     return render(request,'home.html')
@@ -76,97 +76,145 @@ def companylist(request):
 def updatelist(request,id):
     if request.user.is_authenticated and request.user.is_superuser:
         company = Company.objects.get(id=id)
-        updates = Update.objects.filter(company__id=id).order_by("id")
-        if request.method=="POST":
-            waste_category = request.POST["wastecategory"]
-            waste_quantity = request.POST["wastequantity"]
-            if waste_quantity=="":
-                waste_quantity=0
+        updates = Update.objects.filter(company__id=id).order_by("-id")
+        sub_updates = UpdateWaste.objects.filter(update__company__id=id).order_by("-id") 
+        wastepie = [['Waste','Carbon Emission Saved']]
+        statuspie = [["Status","No. of Updates"]]
+        from django.db.models import Count
+        result = Update.objects.values('status').annotate(dcount=Count('status')).order_by()
+        for i in result:
+            statuspie.append([i['status'],i['dcount']])
+        wasteset = dict()
+        for i in sub_updates:
+            if i.waste_category in wasteset.keys():
+                wasteset[i.waste_category]+=i.waste_quantity
             else:
-                waste_quantity=int(waste_quantity)
+                wasteset[i.waste_category]=i.waste_quantity
+        for key,value in wasteset.items():
+            wastepie.append([key,value])
+        if request.method=="POST":
+            error=""
+            selected_waste = []
+            selected_ces = []
+            for waste in WASTES:
+                w1 = request.POST.get(waste+"-quantity")
+                if w1 is not None:
+                    if w1!="":
+                        selected_waste.append([waste,int(w1)])
+                    else:
+                        error="Enter the waste amount"
             state = request.POST["state"]
             district = request.POST.get("district")
             status = request.POST["status"]
-            carbon_emission_saved = request.POST.get("ces")
             certificate = request.FILES.get("certificate")
-            print(state)
-            print(district)
-            error=""
-            if waste_category=="":
-                error="Waste Category can't be blank"
-            elif waste_quantity<1:
-                error="Waste Quantity should be greater than 0"
-            elif state=="SELECT":
+            if state=="SELECT":
                 error="State can't be blank"
             elif district is None or district=="":
                 error="District can't be blank"
             elif status=="":
                 error="Status can't be blank"
-            elif status=="Completed" and carbon_emission_saved=="":
-                error="Carbon Emission Saved can't be blank"
             elif status=="Completed" and certificate is None:
                 error="Enter a certificate"
-            
+            if len(selected_waste)==0:
+                error="Fill at least one waste category"
             if error!="":
-                return render(request,'updatelist.html',{"updates":updates,"company":company,"error":error})
-            if carbon_emission_saved is None:
-                carbon_emission_saved="-"
+                return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"error":error,"wastepie":wastepie,"statuspie":statuspie})
             u=Update.objects.create(
-                company=company,
-                waste_category=waste_category,
-                waste_quantity=waste_quantity,
-                state=state,
-                district=district,
-                status=status,
-                carbon_emission_saved=carbon_emission_saved,
-                certificate=certificate,
-            )
+                    company=company,
+                    state=state,
+                    district=district,
+                    status=status,
+                )
             u.transaction_id="trc"+str(u.id)
+            if status=="Completed":
+                for w in selected_waste:
+                    x= request.POST.get(w[0]+"-quantityCE")
+                    if x=="":
+                        return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"error":"Enter the C.E.S. for "+w[0],"wastepie":wastepie,"statuspie":statuspie})
+                    else:
+                        x=int(x)
+                        selected_ces.append([w[0],x])
+                u.certificate=certificate
             u.save()
-            return render(request,'updatelist.html',{"updates":updates,"company":company,"success":u.transaction_id+" added successfully"})
-        return render(request,'updatelist.html',{"updates":updates,"company":company})
+            for category,quantity in selected_waste:
+                UpdateWaste.objects.create(update=u,waste_category=category,waste_quantity=quantity)
+            if status=="Completed":
+                for category,ces in selected_ces:
+                    uw = UpdateWaste.objects.get(update=u,waste_category=category)
+                    uw.carbon_emission_saved=ces
+                    uw.save()
+            wastepie = [['Waste','Carbon Emission Saved']]
+            statuspie = [["Status","No. of Updates"]]
+            from django.db.models import Count
+            result = Update.objects.values('status').annotate(dcount=Count('status')).order_by()
+            for i in result:
+                statuspie.append([i['status'],i['dcount']])
+            wasteset = dict()
+            for i in sub_updates:
+                if i.waste_category in wasteset.keys():
+                    wasteset[i.waste_category]+=i.waste_quantity
+                else:
+                    wasteset[i.waste_category]=i.waste_quantity
+            for key,value in wasteset.items():
+                wastepie.append([key,value])
+            sub_updates = UpdateWaste.objects.filter(update__company__id=id).order_by("-id") 
+            return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"success":u.transaction_id+" added successfully","wastepie":wastepie,"statuspie":statuspie})
+        return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"wastepie":wastepie,"statuspie":statuspie})
     else:
         return redirect('adminlogin')
 
 def update_detail(request,id):
     if request.user.is_authenticated and request.user.is_superuser:
         update = Update.objects.get(id=id)
+        sub_updates = UpdateWaste.objects.filter(update=update)
         if request.method=="POST":
-            waste_category = request.POST["wastecategory"]
-            waste_quantity = int(request.POST["wastequantity"])
+            error=""
+            selected_waste = []
+            selected_ces = []
+            for waste in WASTES:
+                w = request.POST.get(waste+"-quantity")
+                if w is not None:
+                    if w!="":
+                        selected_waste.append([waste,int(w)])
+                    else:
+                        error="Enter the waste amount of "+waste[0]            
             state = request.POST["state"]
             district = request.POST.get("district")
             status = request.POST["status"]
-            carbon_emission_saved = request.POST.get("ces")
             certificate = request.FILES.get("certificate")
-            error=""
             if district=="":
                 error="District can't be blank"
             if state=="SELECT":
                 error="State can't be blank"
-            if carbon_emission_saved=="":
-                error="Emission Saved can't be blank"
-            
+            if status=="Completed":
+                for waste in selected_waste:
+                    w = request.POST.get(waste[0]+"-quantityCE")
+                    if w!="":
+                            selected_ces.append([waste[0],int(w)])
+                    else:
+                        error="Enter the C.E.S amount of "+waste[0]
             if error!="":
-                return render(request,'update_detail.html',{"update":update,"error":error})
-
-            if waste_category is not None or waste_category!="":
-                update.waste_category=waste_category
-            if waste_quantity is not None and waste_quantity>1:
-                update.waste_quantity=waste_quantity
+                return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates,"error":error})
             if state is not None and state!="":
                 update.state=state
             if district is not None and district!="":
                 update.district=district
             if status is not None and status!="":
                 update.status=status
-            if carbon_emission_saved is not None and carbon_emission_saved!="":
-                update.carbon_emission_saved=carbon_emission_saved
             if certificate is not None:
                 update.certificate=certificate
             update.save()
-            return render(request,'update_detail.html',{"update":update,"changes":"Changes Saved Successfully"})
-        return render(request,'update_detail.html',{"update":update})
+            for waste,quantity in selected_waste:
+                w=UpdateWaste.objects.get(waste_category=waste,update=update)
+                w.waste_quantity=quantity
+                w.save()
+            if status=="Completed":
+                for waste,ces in selected_ces:
+                    w=UpdateWaste.objects.get(waste_category=waste,update=update)
+                    w.carbon_emission_saved=ces
+                    w.save()
+            return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates})
+        return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates})
     else:
         return redirect('adminlogin')
 
@@ -174,14 +222,33 @@ def clientupdatelist(request):
     if request.user.is_authenticated and request.user.is_superuser is not True:
         company = Company.objects.get(user=request.user)
         updates = Update.objects.filter(company=company)
-        return render(request,'clientupdatelist.html',{"updates":updates,"company":company})
+        sub_updates = UpdateWaste.objects.filter(update__company__id=company.id)
+        wastepie = [['Waste','Carbon Emission Saved']]
+        statuspie = [["Status","No. of Updates"]]
+        from django.db.models import Count
+        result = Update.objects.values('status').annotate(dcount=Count('status')).order_by()
+        for i in result:
+            statuspie.append([i['status'],i['dcount']])
+        wasteset = dict()
+        for i in sub_updates:
+            if i.waste_category in wasteset.keys():
+                wasteset[i.waste_category]+=i.waste_quantity
+            else:
+                wasteset[i.waste_category]=i.waste_quantity
+        for key,value in wasteset.items():
+            wastepie.append([key,value])
+        return render(request,'clientupdatelist.html',{"company":company,"sub_updates":sub_updates,"wastepie":wastepie,"statuspie":statuspie})
     else:
         return redirect('clientlogin')
 
 def clientupdatedetail(request,id):
     if request.user.is_authenticated and request.user.is_superuser is not True:
         update = Update.objects.get(id=id)
-        return render(request,'clientupdatedetail.html',{"update":update})
+        sub_updates = UpdateWaste.objects.filter(update__id=id)
+        subwastepie = [["Category","Carbon Emission"]]
+        for i in sub_updates:
+            subwastepie.append([i.waste_category,i.waste_quantity-i.carbon_emission_saved])
+        return render(request,'clientupdatedetail.html',{"update":update,"sub_updates":sub_updates,"subwastepie":subwastepie})
     else:
         return redirect('clientlogin')
 

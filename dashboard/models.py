@@ -18,7 +18,7 @@ STATUS_CHOICES=(
 import os
 def get_upload_path(instance, filename):
     ext = filename.split('.')[-1]
-    filename='{}.{}'.format(instance.transaction_id,ext)
+    filename='{}.{}'.format("trc"+str(instance.id),ext)
     return os.path.join("client_%s" % instance.company, filename)
 
 class Company(models.Model):
@@ -35,7 +35,6 @@ class Update(models.Model):
     district = models.CharField(max_length=200)
     status = models.CharField(max_length=12,choices=STATUS_CHOICES)
     certificate = models.ImageField(upload_to=get_upload_path,null=True,blank=True)
-    carbon_emission_saved = models.CharField(max_length=20,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -46,6 +45,10 @@ class UpdateWaste(models.Model):
     update = models.ForeignKey(Update,on_delete=models.CASCADE)
     waste_category = models.CharField(max_length=12,choices=WASTE_CATEGORY_CHOICES)
     waste_quantity = models.IntegerField()
+    carbon_emission_saved=models.IntegerField(null=True,blank=True)
+
+    def __str__(self):
+        return str(self.update)+" - "+str(self.waste_category)
 
 
 

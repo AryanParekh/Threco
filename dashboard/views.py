@@ -119,13 +119,6 @@ def updatelist(request,id):
                 error="Fill at least one waste category"
             if error!="":
                 return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"error":error,"wastepie":wastepie,"statuspie":statuspie})
-            u=Update.objects.create(
-                    company=company,
-                    state=state,
-                    district=district,
-                    status=status,
-                )
-            u.transaction_id="trc"+str(u.id)
             if status=="Completed":
                 for w in selected_waste:
                     x= request.POST.get(w[0]+"-quantityCE")
@@ -134,6 +127,14 @@ def updatelist(request,id):
                     else:
                         x=int(x)
                         selected_ces.append([w[0],x])
+            u=Update.objects.create(
+                    company=company,
+                    state=state,
+                    district=district,
+                    status=status,
+                )
+            u.transaction_id="trc"+str(u.id)
+            if status=="Completed":
                 u.certificate=certificate
             u.save()
             for category,quantity in selected_waste:

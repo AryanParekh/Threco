@@ -227,7 +227,7 @@ def clientupdatelist(request):
         wastepie = [['Waste','Carbon Emission Saved']]
         statuspie = [["Status","No. of Updates"]]
         from django.db.models import Count
-        result = Update.objects.values('status').annotate(dcount=Count('status')).order_by()
+        result = Update.objects.filter(company=company).values('status').annotate(dcount=Count('status')).order_by()
         for i in result:
             statuspie.append([i['status'],i['dcount']])
         wasteset = dict()

@@ -10,4 +10,5 @@ urlpatterns=[
     path("update_detail/<int:id>/",views.update_detail,name='update_detail'),
     path("clientupdatelist/",views.clientupdatelist,name='clientupdatelist'),
     path("clientupdatedetail/<int:id>/",views.clientupdatedetail,name='clientupdatedetail'),
+    path("downloadexcel/<int:id>/",views.downloadexcel,name='downloadexcel'),
 ]

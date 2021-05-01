@@ -256,6 +256,55 @@ def clientupdatedetail(request,id):
     else:
         return redirect('clientlogin')
 
+def downloadexcel(request,id):
+    if request.user.is_authenticated:
+        from django.http import HttpResponse
+        import xlwt
+        company = Company.objects.get(id=id)
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition']='attachment; filename= Transaction List of ' +company.name+'.xls'
+        wb = xlwt.Workbook(encoding='utf-8')
+
+        updates = Update.objects.filter(company=company)
+        ws=wb.add_sheet("Transaction List")
+        row_num = 0
+        font_style=xlwt.XFStyle()
+        font_style.font.bold=True
+
+        columns = ['Transaction ID','State','District','Status']
+        for col_num in range(len(columns)):
+            ws.write(row_num,col_num,columns[col_num],font_style)
+        
+        font_style=xlwt.XFStyle()
+        rows=updates.values_list('transaction_id','state','district','status')
+        for row in rows:
+            row_num+=1
+            for col_num in range(len(row)):
+                ws.write(row_num,col_num,str(row[col_num]),font_style)
+
+
+
+        for update in updates:
+            ws=wb.add_sheet(update.transaction_id)
+            row_num = 0
+            font_style=xlwt.XFStyle()
+            font_style.font.bold=True
+
+            columns = ['Transaction ID','Waste Category','Waste Quantity','State','District','Status']
+            for col_num in range(len(columns)):
+                ws.write(row_num,col_num,columns[col_num],font_style)
+            
+            font_style=xlwt.XFStyle()
+            rows=UpdateWaste.objects.filter(update__company__id=id,update__transaction_id=update.transaction_id).values_list('update__transaction_id','waste_category','waste_quantity','update__state','update__district','update__status')
+            for row in rows:
+                row_num+=1
+                for col_num in range(len(row)):
+                    ws.write(row_num,col_num,str(row[col_num]),font_style)
+    
+        wb.save(response)
+        return response
+    else:
+        return redirect('clientlogin')
 
 
 

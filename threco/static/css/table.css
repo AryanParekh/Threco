@@ -36,6 +36,13 @@ body{
     float: right;
     padding: 5px;
 }
+.folder .container .add2{
+    cursor: pointer;
+    border-radius: 10px;
+    background-color: #074c74;
+    color: white;
+    padding: 5px;
+}
 
 @media(max-width: 775px) {
     .table a{

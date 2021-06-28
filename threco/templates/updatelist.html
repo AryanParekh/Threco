@@ -166,11 +166,20 @@
             <a style="float: left !important;text-decoration: none;" href="{% url 'companylist' %}">
               <button type="button" class="add">Back</button>
             </a>
+            <div class="dropdown">
+              <button class="dropbtn">Certificate ▼</button>
+              <div class="dropdown-content">
+                <a href="#">E-Waste</a>
+                <a href="#">Plastic</a>
+                <a href="#">Paper</a>
+                <a href="#">Metal</a>
+              </div>
+            </div>
             <a style="text-decoration: none;" href="{% url 'downloadexcel' company.id %}">
               <button type="button" class="add">Download Excel</button>
             </a>
             <button style="margin-right: 2px;" type="button" onclick="zindexchanger()" class="add">Add Update</button>
-            <br><br>
+            <br><br><br>
           </div>
         </div>
         <div class="chartdiv container">

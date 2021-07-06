@@ -150,6 +150,7 @@ def updatelist(request,id):
             from django.db.models import Count
             # result = Update.objects.values('status').annotate(dcount=Count('status')).order_by()
             result = Update.objects.filter(company=company).values('status').annotate(dcount=Count('status')).order_by()
+            sub_updates = UpdateWaste.objects.filter(update__company__id=id).order_by("-id")
             for i in result:
                 statuspie.append([i['status'],i['dcount']])
             wasteset = dict()

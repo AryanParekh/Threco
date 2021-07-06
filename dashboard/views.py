@@ -76,6 +76,7 @@ def companylist(request):
 def updatelist(request,id):
     if request.user.is_authenticated and request.user.is_superuser:
         company = Company.objects.get(id=id)
+        print(company)
         updates = Update.objects.filter(company__id=id).order_by("-id")
         sub_updates = UpdateWaste.objects.filter(update__company__id=id).order_by("-id") 
         wastepie = [['Waste','Carbon Emission Saved']]
@@ -147,7 +148,8 @@ def updatelist(request,id):
             wastepie = [['Waste','Carbon Emission Saved']]
             statuspie = [["Status","No. of Updates"]]
             from django.db.models import Count
-            result = Update.objects.values('status').annotate(dcount=Count('status')).order_by()
+            # result = Update.objects.values('status').annotate(dcount=Count('status')).order_by()
+            result = Update.objects.filter(company=company).values('status').annotate(dcount=Count('status')).order_by()
             for i in result:
                 statuspie.append([i['status'],i['dcount']])
             wasteset = dict()

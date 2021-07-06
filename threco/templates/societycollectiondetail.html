@@ -22,24 +22,29 @@
   <script src="https://www.gstatic.com/charts/loader.js"></script>
    <script>
        google.charts.load('current',{'packages':['corechart']});
-       google.charts.setOnLoadCallback(drawChart);
        google.charts.setOnLoadCallback(drawChart2);
 
-       function drawChart(){
-           var x = {{statuspie|safe}}
-           var data = google.visualization.arrayToDataTable(x,false);
-           var options={
-               title: "Predictions"
-           };
-           var chart = new google.visualization.PieChart(document.getElementById('chart1'));
-           chart.draw(data,options);
-
-       }
        function drawChart2(){
-           var x = {{wastepie|safe}}
-           var data = google.visualization.arrayToDataTable(x,false);
+        //    var x = {{wastepie|safe}}
+        //    var data = google.visualization.arrayToDataTable(x,false);
+        var data = new google.visualization.DataTable();
+        data.addColumn('string','Waste Category')
+        data.addColumn('number','Quantity')
+        data.addRows([
+            ['Glass', {{collection.glass}}],
+            ['Paper', {{collection.paper}}],
+            ['Metal', {{collection.metal}}],
+            ['Mix Plastic', {{collection.mix_plastic}}],
+            ['PET Bottles', {{collection.pet_bottles}}],
+            ['MLP Packaging', {{collection.mlp_packaging}}],
+            ['Tetrapack', {{collection.tetrapack}}],
+            ['Cartons', {{collection.cartons}}],
+            ['E-Waste', {{collection.e_waste}}],
+            ['Hazardous Waste', {{collection.hazardous_waste}}],
+            ['Other Waste',{{collection.other_waste}} ],
+        ]);
            var options={
-               title: "Carbon Emission Saved"
+               title: "Waste Category and Quantity"
            };
            var chart = new google.visualization.PieChart(document.getElementById('chart2'));
            chart.draw(data,options);
@@ -51,19 +56,16 @@
    <div class="container">
        <img style="width: 245px;" src="{% static 'img/ThrecoLogo.png' %}" alt=""><br><br>
        <!-- <img src="{% static 'img/Logopng.webp' %}" alt=""><br><br> -->
-       <h2><b>Society Collections</b></h2>
+       <h2><b>{{collection.society_name}} - {{collection.created_at}}</b></h2>
+       <br><br>
    </div>
 </div>
-<!-- <div class="chartdiv container">
-   <div class="wrapperx x">
-       <h5>Status Pie Chart</h5>
-       <div class="chart" id="chart1"></div>
-   </div>
+<div class="chartdiv container">
    <div class="wrapperx">
        <h5>Waste Category Pie Chart</h5>
        <div class="chart" id="chart2"></div>
    </div>
-   </div> -->
+   </div>
 <div class="folder">
    <div class="container">
        <table class="table table-fluid" id="myTable">

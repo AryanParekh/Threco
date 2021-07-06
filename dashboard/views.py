@@ -1,8 +1,12 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
-from dashboard.models import Company,Update,UpdateWaste
+from dashboard.models import Company,Update,UpdateWaste,SocietyCollection
+from dashboard.serializers import SocietyCollectionSerializer
 from django.contrib.auth.models import User
+from rest_framework import generics,mixins,status
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
 # Create your views here.
 
 WASTES = ["E Waste","Plastic","Paper","Metal","Others"]
@@ -328,3 +332,66 @@ def downloadexcel(request,id):
     #             )
     #     u.transaction_id="trc"+str(u.id)
     #     u.save()
+
+
+
+# SOCIETY PART
+
+class SocietyCollectionCreate(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = SocietyCollection.objects.all()
+    serializer_class = SocietyCollectionSerializer
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class SocietyCollectionCrud(mixins.UpdateModelMixin, generics.GenericAPIView):
+    queryset = SocietyCollection.objects.all()
+    serializer_class = SocietyCollectionSerializer
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+@api_view(["GET"])
+def SocietyCollectionList(request,username):
+    if request.method=="GET":
+        return JsonResponse(
+            SocietyCollectionSerializer(SocietyCollection.objects.filter(employee_username=username).order_by("created_at"),many=True).data,
+            status=status.HTTP_200_OK,
+            safe=False,
+        )
+    else:
+        return JsonResponse(
+            data={"Message": "Only GET request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+def adminlogin2(request):
+    if request.method=="GET":
+        return render(request,'adminlogin.html')
+    if request.method=="POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(username=username,password=password)
+        if user is not None:
+            if user.is_superuser:
+                login(request,user)
+                return redirect('societycollection')
+            else:
+                return render(request,'adminlogin.html',{"error":"User is not a superuser"})
+        else:
+            return render(request,'adminlogin.html',{"error":"User does not exist"})
+
+def societycollection(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        collection = SocietyCollection.objects.all().order_by('created_at')
+        return render(request,'societycollection.html',{"collection":collection})
+    else:
+        return redirect('adminlogin2')
+
+def societycollectiondetail(request,id):
+    if request.user.is_authenticated and request.user.is_superuser:
+        collection = SocietyCollection.objects.get(id=id)
+        return render(request,'societycollectiondetail.html',{"collection":collection})
+    else:
+        return redirect('adminlogin2')

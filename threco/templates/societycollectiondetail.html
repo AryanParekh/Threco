@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{company.name}} Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <script
+  src="http://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" ></script>
+  <link rel="stylesheet" href="{% static 'css/table.css' %}">
+  <link rel="stylesheet" href="{% static 'css/popupform.css' %}" />
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+   <script>
+       google.charts.load('current',{'packages':['corechart']});
+       google.charts.setOnLoadCallback(drawChart);
+       google.charts.setOnLoadCallback(drawChart2);
+
+       function drawChart(){
+           var x = {{statuspie|safe}}
+           var data = google.visualization.arrayToDataTable(x,false);
+           var options={
+               title: "Predictions"
+           };
+           var chart = new google.visualization.PieChart(document.getElementById('chart1'));
+           chart.draw(data,options);
+
+       }
+       function drawChart2(){
+           var x = {{wastepie|safe}}
+           var data = google.visualization.arrayToDataTable(x,false);
+           var options={
+               title: "Carbon Emission Saved"
+           };
+           var chart = new google.visualization.PieChart(document.getElementById('chart2'));
+           chart.draw(data,options);
+       }
+   </script>
+</head>
+<body>
+<div class="folder">
+   <div class="container">
+       <img style="width: 245px;" src="{% static 'img/ThrecoLogo.png' %}" alt=""><br><br>
+       <!-- <img src="{% static 'img/Logopng.webp' %}" alt=""><br><br> -->
+       <h2><b>Society Collections</b></h2>
+   </div>
+</div>
+<!-- <div class="chartdiv container">
+   <div class="wrapperx x">
+       <h5>Status Pie Chart</h5>
+       <div class="chart" id="chart1"></div>
+   </div>
+   <div class="wrapperx">
+       <h5>Waste Category Pie Chart</h5>
+       <div class="chart" id="chart2"></div>
+   </div>
+   </div> -->
+<div class="folder">
+   <div class="container">
+       <table class="table table-fluid" id="myTable">
+       <thead>
+       <tr>
+          <th>Sr. No</th>
+          <th>Waste Category</th>
+          <th>Quantity</th>
+      </tr>
+       </thead>
+       <tbody>
+           <tr><td data-label="Sr. No">1</td><td data-label="Waste Category">Glass</td><td data-label="Quantity">{{collection.glass}}</td></tr>
+           <tr><td data-label="Sr. No">2</td><td data-label="Waste Category">Paper</td><td data-label="Quantity">{{collection.paper}}</td></tr>
+           <tr><td data-label="Sr. No">3</td><td data-label="Waste Category">Metal</td><td data-label="Quantity">{{collection.metal}}</td></tr>
+           <tr><td data-label="Sr. No">4</td><td data-label="Waste Category">Mix Plastic</td><td data-label="Quantity">{{collection.mix_plastic}}</td></tr>
+           <tr><td data-label="Sr. No">5</td><td data-label="Waste Category">PET Bottles</td><td data-label="Quantity">{{collection.pet_bottles}}</td></tr>
+           <tr><td data-label="Sr. No">6</td><td data-label="Waste Category">MLP Packaging</td><td data-label="Quantity">{{collection.mlp_packaging}}</td></tr>
+           <tr><td data-label="Sr. No">7</td><td data-label="Waste Category">Tetrapack</td><td data-label="Quantity">{{collection.tetrapack}}</td></tr>
+           <tr><td data-label="Sr. No">8</td><td data-label="Waste Category">Cartons</td><td data-label="Quantity">{{collection.cartons}}</td></tr>
+           <tr><td data-label="Sr. No">9</td><td data-label="Waste Category">E-Waste</td><td data-label="Quantity">{{collection.e_waste}}</td></tr>
+           <tr><td data-label="Sr. No">10</td><td data-label="Waste Category">Hazardous Waste</td><td data-label="Quantity">{{collection.hazardous_waste}}</td></tr>
+           <tr><td data-label="Sr. No">11</td><td data-label="Waste Category">Other Waste</td><td data-label="Quantity">{{collection.other_waste}}</td></tr>
+       </tbody>
+       </table>
+   </div>
+</div> 
+<br><br>
+<script>
+    $(document).ready( function () {
+    $('#myTable').DataTable({
+    "iDisplayLength": 25
+  });
+} );
+    </script>
+</body>
+</html>

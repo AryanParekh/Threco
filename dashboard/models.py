@@ -51,6 +51,37 @@ class UpdateWaste(models.Model):
         return str(self.update)+" - "+str(self.waste_category)
 
 
+# SOCIETY PART
+
+class SocietyCollection(models.Model):
+    society_name = models.CharField(max_length=100)
+    contact_person_name = models.CharField(max_length=100)
+    contact_no = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    society_location = models.CharField(max_length=300)
+    employee_username = models.CharField(max_length=100)
+    glass = models.FloatField(default=0,null=True,blank=True)
+    paper = models.FloatField(default=0,null=True,blank=True)
+    metal = models.FloatField(default=0,null=True,blank=True)
+    mix_plastic = models.FloatField(default=0,null=True,blank=True)
+    pet_bottles = models.FloatField(default=0,null=True,blank=True)
+    mlp_packaging = models.FloatField(default=0,null=True,blank=True)
+    tetrapack = models.FloatField(default=0,null=True,blank=True)
+    cartons = models.FloatField(default=0,null=True,blank=True)
+    e_waste = models.FloatField(default=0,null=True,blank=True)
+    hazardous_waste = models.FloatField(default=0,null=True,blank=True)
+    other_waste = models.FloatField(default=0,null=True,blank=True)
+
+    def __str__(self):
+        return str(self.society_name)+" - "+str(self.created_at)
+
+
+
+
+
+
+
 
 
 

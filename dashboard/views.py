@@ -356,7 +356,7 @@ class SocietyCollectionCrud(mixins.UpdateModelMixin, generics.GenericAPIView):
 def SocietyCollectionList(request,username):
     if request.method=="GET":
         return JsonResponse(
-            SocietyCollectionSerializer(SocietyCollection.objects.filter(employee_username=username).order_by("created_at"),many=True).data,
+            SocietyCollectionSerializer(SocietyCollection.objects.filter(employee_username=username).order_by("-created_at")[:3],many=True).data,
             status=status.HTTP_200_OK,
             safe=False,
         )

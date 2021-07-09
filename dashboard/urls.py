@@ -17,5 +17,6 @@ urlpatterns=[
     path("api/collection_list/<str:username>",views.SocietyCollectionList,name="collection_list"),
     path("adminlogin2/",views.adminlogin2,name='adminlogin2'),
     path("societycollection/",views.societycollection,name='societycollection'),
-    path("societycollectiondetail/<int:id>",views.societycollectiondetail,name='societycollectiondetail')
+    path("societycollectiondetail/<int:id>",views.societycollectiondetail,name='societycollectiondetail'),
+    path("downloadexcel2/",views.downloadexcel2,name='downloadexcel2')
 ]

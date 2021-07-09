@@ -384,7 +384,7 @@ def adminlogin2(request):
 
 def societycollection(request):
     if request.user.is_authenticated and request.user.is_superuser:
-        collection = SocietyCollection.objects.all().order_by('created_at')
+        collection = SocietyCollection.objects.all().order_by('-created_at')
         return render(request,'societycollection.html',{"collection":collection})
     else:
         return redirect('adminlogin2')
@@ -393,5 +393,58 @@ def societycollectiondetail(request,id):
     if request.user.is_authenticated and request.user.is_superuser:
         collection = SocietyCollection.objects.get(id=id)
         return render(request,'societycollectiondetail.html',{"collection":collection})
+    else:
+        return redirect('adminlogin2')
+
+def downloadexcel2(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        from django.http import HttpResponse
+        import xlwt
+        records = SocietyCollection.objects.all()
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition']='attachment; filename= Society Collection List.xls'
+        wb = xlwt.Workbook(encoding='utf-8')
+
+        ws=wb.add_sheet("Transaction List")
+        row_num = 0
+        font_style=xlwt.XFStyle()
+        font_style.font.bold=True
+
+        columns = ['Collection ID','Society Name','Contact Person','Contact Number','Society Location','Glass','Paper','Metal','Mix Plastic','PET Bottles','MLP Packaging','Tetrapack','Cartons','E-Waste','Hazardous Waste','Other Waste','Collected By','Collected At','Last Updated At']
+        for col_num in range(len(columns)):
+            ws.write(row_num,col_num,columns[col_num],font_style)
+        
+        font_style=xlwt.XFStyle()
+        rows=records.values_list(
+            "id",
+            "society_name",
+            "contact_person_name",
+            "contact_no",
+            "society_location",
+            "glass",
+            "paper",
+            "metal",
+            "mix_plastic",
+            "pet_bottles",
+            "mlp_packaging",
+            "tetrapack",
+            "cartons",
+            "e_waste",
+            "hazardous_waste",
+            "other_waste",
+            "employee_username",
+            )
+        for row in rows:
+            row = list(row)
+            record_id = SocietyCollection.objects.get(id=row[0])
+            row.append(record_id.created_at.strftime("%Y-%m-%d %I:%M %p"))
+            row.append(record_id.updated_at.strftime("%Y-%m-%d %I:%M %p"))
+            row = tuple(row)
+            row_num+=1
+            for col_num in range(len(row)):
+                ws.write(row_num,col_num,str(row[col_num]),font_style)
+
+        wb.save(response)
+        return response
     else:
         return redirect('adminlogin2')

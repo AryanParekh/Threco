@@ -52,6 +52,16 @@
        <img style="width: 245px;" src="{% static 'img/ThrecoLogo.png' %}" alt=""><br><br>
        <!-- <img src="{% static 'img/Logopng.webp' %}" alt=""><br><br> -->
        <h2><b>Society Collections</b></h2>
+       <div class="dropdown">
+        <button class="dropbtn">Certificate ▼</button>
+        <div class="dropdown-content">
+          <a target="_blank" href="https://forms.gle/5uwzQsG3fJ4cK4eE9">Society E-Waste</a>
+          <a target="_blank" href="https://forms.gle/cxEgcpHBnyjzynnN6">Society Dry Waste</a>
+        </div>
+      </div>
+      <a style="text-decoration: none;" href="{% url 'downloadexcel2' %}">
+        <button type="button" class="add">Download Excel</button>
+      </a>
    </div>
 </div>
 <!-- <div class="chartdiv container">
@@ -74,6 +84,7 @@
           <th>Contact Person</th>
           <th>Contact Number</th>
           <th>Society Location</th>
+          <th>Collected By</th>
           <th>Collected At</th>
           <th>Last Updated At</th>
       </tr>
@@ -86,6 +97,7 @@
            <td data-label="Contact Person"><a href="{% url 'societycollectiondetail' c.id %}">{{c.contact_person_name}}</a></td>
            <td data-label="Contact Number"><a href="{% url 'societycollectiondetail' c.id %}">{{c.contact_no}}</a></td>
            <td data-label="Society Location"><a href="{% url 'societycollectiondetail' c.id %}">{{c.society_location}}</a></td>
+           <td data-label="Collected By"><a href="{% url 'societycollectiondetail' c.id %}">{{c.employee_username}}</a></td>
            <td data-label="Collected At"><a href="{% url 'societycollectiondetail' c.id %}">{{c.created_at}}</a></td>
            <td data-label="Last Updated At"><a href="{% url 'societycollectiondetail' c.id %}">{{c.updated_at}}</a></td>
            </tr>

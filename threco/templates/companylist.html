@@ -11,15 +11,15 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="{% static 'css/popupform.css' %}" />
-    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
- 
-     <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+
+     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" ></script>
    <link rel="stylesheet" href="{% static 'css/table.css' %}">
@@ -52,14 +52,14 @@
             <div class="inputfield">
               <label>Confirm Password</label>
               <input name="password2" type="password" class="input">
-            </div>  
+            </div>
             <br>
             <div class="inputfield">
               <button id="submitbtn" type="submit" value="Register" class="btn">SUBMIT</button>
             </div>
           </form>
         </div>
-      </div>	
+      </div>
     </div>
     <div id="divx">
         <div id="wrap" class="folder">
@@ -85,7 +85,7 @@
                 </thead>
                 <tbody>
                     {% for company in companies %}
-                    <tr>  
+                    <tr>
                     <td data-label="Sr.No"><a href="{% url 'updatelist' company.id %}">{{forloop.counter}}</a></td>
                     <td data-label="Client ID"><a href="{% url 'updatelist' company.id %}">{{company.user.username}}</a></td>
                     <td data-label="Client Name"><a href="{% url 'updatelist' company.id %}">{{company.name}}</a></td>
@@ -118,7 +118,7 @@
     filter = input.value.toUpperCase();
     ul = document.getElementById("myUL");
     li = ul.getElementsByTagName('li');
-  
+
     // Loop through all list items, and hide those who don't match the search query
     for (i = 0; i < li.length; i++) {
       a = li[i].getElementsByTagName("span")[0];

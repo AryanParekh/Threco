@@ -37,6 +37,7 @@ class Update(models.Model):
     certificate = models.ImageField(upload_to=get_upload_path,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    note = models.TextField(null=True,blank=True)
 
     def __str__(self):
         return str(self.company)+" - "+str(self.transaction_id)
@@ -44,8 +45,11 @@ class Update(models.Model):
 class UpdateWaste(models.Model):
     update = models.ForeignKey(Update,on_delete=models.CASCADE)
     waste_category = models.CharField(max_length=12,choices=WASTE_CATEGORY_CHOICES)
-    waste_quantity = models.IntegerField()
-    carbon_emission_saved=models.IntegerField(null=True,blank=True)
+    waste_quantity = models.DecimalField(decimal_places=2,max_digits=7)
+    incineration_rate = models.DecimalField(null=True,blank=True,decimal_places=2,max_digits=7)
+    landfill_rate = models.DecimalField(null=True,blank=True,decimal_places=2,max_digits=7)
+    recycling_rate = models.DecimalField(null=True,blank=True,decimal_places=2,max_digits=7)
+    carbon_emission_saved=models.DecimalField(null=True,blank=True,decimal_places=2,max_digits=7)
 
     def __str__(self):
         return str(self.update)+" - "+str(self.waste_category)

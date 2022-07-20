@@ -53,6 +53,16 @@
               <label>Confirm Password</label>
               <input name="password2" type="password" class="input">
             </div>
+            <div class="inputfield">
+              <label>Employee Name</label>
+              <div class="custom_select">
+                <select id="employee_name" name="employee_name">
+                  <option value="">Select</option>
+                  <option value="Roocha">Roocha</option>
+                  <option value="Sharika Dhar">Sharika Dhar</option>
+                </select>
+              </div>
+            </div>
             <br>
             <div class="inputfield">
               <button id="submitbtn" type="submit" value="Register" class="btn">SUBMIT</button>
@@ -81,6 +91,7 @@
                    <th>Client ID</th>
                    <th>Client Name</th>
                    <th>Joining Date</th>
+                   <th>Employee Name</th>
                </tr>
                 </thead>
                 <tbody>
@@ -90,6 +101,7 @@
                     <td data-label="Client ID"><a href="{% url 'updatelist' company.id %}">{{company.user.username}}</a></td>
                     <td data-label="Client Name"><a href="{% url 'updatelist' company.id %}">{{company.name}}</a></td>
                     <td data-label="Joining Date"><a href="{% url 'updatelist' company.id %}">{{company.user.date_joined.date}}</a></td>
+                    <td data-label="Employee Name"><a href="{% url 'updatelist' company.id %}">{{company.point_of_contact}}</a></td>
                     {% endfor %}
                 </tbody>
                 </table>

@@ -15,30 +15,36 @@ STATUS_CHOICES=(
     ("Completed","Completed"),
 )
 
+EMPLOYEE_CHOICES=(
+    ("Sharika Dhar","Sharika Dhar"),
+    ("Roocha", "Roocha" ),
+)
 import os
 def get_upload_path(instance, filename):
     ext = filename.split('.')[-1]
     filename='{}.{}'.format("trc"+str(instance.id),ext)
-    return os.path.join("client_%s" % instance.company, filename)
+    return os.path.join("client_%s" % instance.update.company, filename)
 
 class Company(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-
+    point_of_contact=models.CharField(max_length=255, default="Sharika Dhar", choices=EMPLOYEE_CHOICES)
     def __str__(self):
         return self.name
 
 class Update(models.Model):
     transaction_id = models.CharField(max_length=20)
     company = models.ForeignKey(Company,on_delete=models.CASCADE)
-    state = models.CharField(max_length=200)
-    district = models.CharField(max_length=200)
+    employee_name = models.CharField(max_length=200, default="Roocha", choices=EMPLOYEE_CHOICES)
+    district = models.CharField(max_length=200, default="Maharashtra")
+    city = models.CharField(max_length=200, default="Mumbai")
     status = models.CharField(max_length=12,choices=STATUS_CHOICES)
     certificate = models.ImageField(upload_to=get_upload_path,null=True,blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=False,null=True)
+    updated_at = models.DateTimeField(auto_now=True,  null=True)
+    date_of_activity = models.DateField(auto_now_add=False, null=True)
     note = models.TextField(null=True,blank=True)
-
+    recycling_percentage=models.IntegerField(null=True, default=100)
     def __str__(self):
         return str(self.company)+" - "+str(self.transaction_id)
 
@@ -50,7 +56,9 @@ class UpdateWaste(models.Model):
     landfill_rate = models.DecimalField(null=True,blank=True,decimal_places=2,max_digits=7)
     recycling_rate = models.DecimalField(null=True,blank=True,decimal_places=2,max_digits=7)
     carbon_emission_saved=models.DecimalField(null=True,blank=True,decimal_places=2,max_digits=7)
-
+    certificate = models.ImageField(upload_to=get_upload_path,null=True,blank=True)
+    recycling_percentage=models.IntegerField(null=True, default=100)
+    status = models.CharField(max_length=12,choices=STATUS_CHOICES,default="In Process")
     def __str__(self):
         return str(self.update)+" - "+str(self.waste_category)
 

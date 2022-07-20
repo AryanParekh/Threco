@@ -72,7 +72,7 @@
                 <input type="text" class="input" value="{{update.company.name}}" disabled>
             </div>
             <div class="inputfield">
-                <label>Client ID</label>
+                <label>Client IDs</label>
                 <input type="text" class="input" value="{{update.company.user.username}}" disabled>
             </div>
             <div class="inputfield4">
@@ -96,12 +96,49 @@
               </div>
             </div>
             {% endfor %}
-            <div class="inputfield">
+            {% comment %} <div class="inputfield">
                 <label>Location</label>
                 <div style="display: flex;" class="input">
                   <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
                   <div class="custom_select"><select name="district" id='secondlist'></select></div>
                 </div>
+            </div> {% endcomment %}
+            <div class="inputfield" id="selection">
+              <label>City</label>
+              <div style="display: flex;width: 100%;">
+                <input id="city" name="city" type="text" onchange="updateces(this)" >
+                {% comment %} <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
+                <div class="custom_select"><select name="district" id='secondlist'></select></div> {% endcomment %}
+              </div>
+            </div>
+            <div class="inputfield" id="selection">
+              <label>Recycling Percentage</label>
+              <div style="display: flex;margin:0;width: 100%;">
+                <input id="recycling_percentage" name="recycling_percentage" type="number" onchange="updateces(this)" >
+                {% comment %} <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
+                <div class="custom_select"><select name="district" id='secondlist'></select></div> {% endcomment %}
+              </div>
+            </div>
+            <div class="inputfield" id="selection">
+              <label>Date Of Activity</label>
+              <div style="display: flex;margin:0;width: 100%;">
+                <input id="date_of_activity" name="date_of_activity" type="date"
+                placeholder="yyyy-mm-dd" 
+                onchange="updateces(this)" >
+      
+                {% comment %} <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
+                <div class="custom_select"><select name="district" id='secondlist'></select></div> {% endcomment %}
+              </div>
+            </div>
+            <div class="inputfield">
+              <label>Employee Name</label>
+              <div class="custom_select">
+                <select id="employee_name" name="employee_name" onchange="updateces(this)">
+                  <option value="">Select</option>
+                  <option value="Roocha">Roocha</option>
+                  <option value="Sharika Dhar">Sharika Dhar</option>
+                </select>
+              </div>
             </div>
             <div class="inputfield">
               <label>Status</label>
@@ -179,24 +216,32 @@
           </div>
           {% endfor %}
           <div class="inputfield">
-            <label>Location</label>
-            <p class="input">{{update.state}} - {{update.district}}</p>
+            <label>Employee</label>
+            <p class="input">{{update.employee_name}}</p>
+          </div>
+          <div class="inputfield">
+            <label>City</label>
+            <p class="input">{{update.city}}</p>
+          </div>
+          <div class="inputfield">
+            <label>Recycling Percentage</label>
+            <p class="input">{{true_sub_update.recycling_percentage}}%</p>
           </div>
           <div class="inputfield">
             <label>Status</label>
-            <p class="input">{{update.status}}</p>
+            <p class="input">{{true_sub_update.status}}</p>
           </div>
           <div class="inputfield">
             <label>Certificate</label>
-            {% if update.certificate %}
-            <a href="{{update.certificate.url}}" class="input">Click Here to view</a>
+            {% if true_sub_update.certificate %}
+            <a href="{{true_sub_update.certificate.url}}" class="input">Click Here to view</a>
             {% else %}
             <p class="input">Not Uploaded</p>
             {% endif %}
           </div>
           <div class="inputfield">
-            <label>Created At</label>
-            <p class="input">{{update.created_at}}</p>
+            <label>Date of Activity</label>
+            <p class="input">{{update.date_of_activity}}</p>
           </div>
           <div class="inputfield">
             <label>Updated At</label>

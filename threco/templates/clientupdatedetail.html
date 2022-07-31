@@ -54,16 +54,16 @@
                     <p class="input"><b>C.E.S.</b></p>
                 </div>
             </div>
-            {% for sub_update in sub_updates %}
+            {% comment %} {% for sub_update in sub_updates %} {% endcomment %}
             <div class="inputfield">
                 <label></label>
                 <div style="display: flex;"  class="input">
-                <p style="margin-right: 2px;" class="input"><span style="color: #0369a5;"><b>{{sub_update.waste_category}}</b></span></p>
-                <p style="margin-right: 2px;" class="input">{{sub_update.waste_quantity}}</p>
-                <p class="input">{{sub_update.carbon_emission_saved}}</p>
+                <p style="margin-right: 2px;" class="input"><span style="color: #0369a5;"><b>{{true_sub_update.waste_category}}</b></span></p>
+                <p style="margin-right: 2px;" class="input">{{true_sub_update.waste_quantity}}</p>
+                <p class="input">{{true_sub_update.carbon_emission_saved}}</p>
                 </div>
             </div>
-            {% endfor %}
+            {% comment %} {% endfor %} {% endcomment %}
             <div class="inputfield">
                 <label><b style="color:#074c74;">Employee Name</b></label>
                 <p class="input">{{update.employee_name}}</p>
@@ -100,7 +100,7 @@
             <br>
             {% if true_sub_update.certificate %}
             <div class="inputfield">
-                <a style="text-decoration: none;position: center;" class="btn" href="{{true_sub_update.certificate.url}}" download="{{true_sub_update.heading}}">DOWNLOAD</a>
+                <a style="text-decoration: none;position: center;" class="btn" href="{{true_sub_update.certificate.url}}">DOWNLOAD</a>
             </div>
             {% else %}
             <div class="inputfield">

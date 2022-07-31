@@ -84,18 +84,18 @@
               <p style="margin-right: 3px;" class="input">C.E.S</p>
               </div>
             </div>
-            {% for sub_update in sub_updates %}
+            {% comment %} {% for sub_update in sub_updates %} {% endcomment %}
             <div class="inputfield4">
               <label style="width: 50%;">
                 <span style="color:#074c74;width: 100%;margin-right: 3px;">
-                  <input onclick="enabledisable(this)" name="{{sub_update.waste_category}}-check" class="wastechecks" type="checkbox">&nbsp;&nbsp;{{sub_update.waste_category}}</span>
+                  <input onclick="enabledisable(this)" name="{{true_sub_update.waste_category}}-check" class="wastechecks" type="checkbox">&nbsp;&nbsp;{{true_sub_update.waste_category}}</span>
               </label>
               <div style="display: flex;width: 100%;">
-              <input onchange="updateces(this)" style="margin-right: 3px;" id="{{sub_update.waste_category}}-quantity" name="{{sub_update.waste_category}}-quantity" type="number" class="input" min="1" value="{{sub_update.waste_quantity}}" disabled>
-              <input id="{{sub_update.waste_category}}-quantityCE" name="{{sub_update.waste_category}}-quantityCE" type="number" class="input CE" min="0" value="{{sub_update.carbon_emission_saved}}" disabled>
+              <input onchange="updateces(this)" style="margin-right: 3px;" id="{{true_sub_update.waste_category}}-quantity" name="{{true_sub_update.waste_category}}-quantity" type="number" class="input" min="1" value="{{true_sub_update.waste_quantity}}" disabled>
+              <input id="{{true_sub_update.waste_category}}-quantityCE" name="{{true_sub_update.waste_category}}-quantityCE" type="number" class="input CE" min="0" value="{{true_sub_update.carbon_emission_saved}}">
               </div>
             </div>
-            {% endfor %}
+            {% comment %} {% endfor %} {% endcomment %}
             {% comment %} <div class="inputfield">
                 <label>Location</label>
                 <div style="display: flex;" class="input">
@@ -133,10 +133,11 @@
             <div class="inputfield">
               <label>Employee Name</label>
               <div class="custom_select">
-                <select id="employee_name" name="employee_name" onchange="updateces(this)">
+                <select id="employee_name" name="employee_name">
                   <option value="">Select</option>
-                  <option value="Roocha">Roocha</option>
-                  <option value="Sharika Dhar">Sharika Dhar</option>
+                  {% for employee in employees %}
+                  <option value="{{employee.name}}">{{employee.name}}</option>
+                  {% endfor %}
                 </select>
               </div>
             </div>

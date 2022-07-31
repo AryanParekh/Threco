@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+<h1>Download Excel</h1>
+</head>
+<body>
+    <div>
+        <form role="form" method='post'>
+
+              {% csrf_token %}
+                <p>
+                {{ error }}
+                </p>
+                <select name="month">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+                </select>
+                <br />
+            <input name="year" type="number" min="1900" max="2099" step="1" value="2016" />
+            <br /> 
+          <a style="float: left !important;text-decoration: none;" href="{% url 'downloadexcel3' %}">
+                  <button type="submit" class="add">Download Excel</button>
+          </a>
+    </form>
+    <br />
+            <a style="float: left !important;text-decoration: none;" href="{% url 'companylist' %}">
+                  <button class="add">Back</button>
+          </a>
+    </div>
+</body>
+</html>

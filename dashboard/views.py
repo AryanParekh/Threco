@@ -1,12 +1,16 @@
+from inspect import trace
 from django.shortcuts import render,redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate,login
-from dashboard.models import Company,Update,UpdateWaste,SocietyCollection
+from django.contrib.auth import logout
+from dashboard.models import Company,Update,UpdateWaste,SocietyCollection,Employee
 from dashboard.serializers import SocietyCollectionSerializer
 from django.contrib.auth.models import User
 from rest_framework import generics,mixins,status
 from django.http import JsonResponse
+from io import BytesIO
 from rest_framework.decorators import api_view
+from django.db.models import Sum
 # Create your views here.
 
 WASTES = ["E Waste","Plastic","Paper","Metal","Others"]
@@ -46,49 +50,79 @@ def clientlogin(request):
         else:
             return render(request,'clientlogin.html',{"error":"User does not exist"})
 
+def clientlogout(request):
+    logout(request)
+    return redirect('clientlogin')
+
+
 def companylist(request):
     if request.user.is_authenticated and request.user.is_superuser:
+        total=0
+        etotal=0
         companies = Company.objects.all().order_by("-user__date_joined")
+        employees = Employee.objects.all()
+        for company in companies:
+            all_update_waste=UpdateWaste.objects.filter(update__company=company)
+            for each_update_waste in all_update_waste:
+                total=total+each_update_waste.waste_quantity
+                if each_update_waste.waste_category=="E Waste":
+                    etotal=etotal+each_update_waste.waste_quantity
+            company.total_waste=total
+            company.e_waste=etotal
+            company.save()
+            #print(total)
+            total=0
+            etotal=0
         if request.method=="POST":
-            client_name=request.POST["clientname"]
-            username=request.POST["username"]
-            password=request.POST["password"]
-            password2=request.POST["password2"]
-            employee_name=request.POST.get("employee_name")
-            print(employee_name)
-            error=""
-            if client_name=="":
-                error="Client Name cannot be blank"
-            elif username=="":
-                error="Client ID cannot be blank"
-            elif password=="":
-                error="Set Password is blank, Please fill the form again"
-            elif password2=="":
-                error="Confirm Password is blank, Please fill the form again"
-            elif employee_name=="":
-                error="Employee Name cannot be blank."
-            if error!="":
-                return render(request,'companylist.html',{"companies":companies,"error":error})
-            if password!=password2:
-                return render(request,'companylist.html',{"companies":companies,"error":"Password entered while confirming is different"})
-            try:
-                user = User.objects.create_user(username=username,password=password)
-                Company.objects.create(user=user,name=client_name,point_of_contact=employee_name)
-            except:
-                return render(request,'companylist.html',{"companies":companies,"error":"Error while adding company, please try again"})
-        return render(request,'companylist.html',{"companies":companies})
+            print(request.POST)
+            employeename=request.POST.get("employeename")
+            print(employeename)
+            if employeename==None:
+                client_name=request.POST["clientname"]
+                username=request.POST["username"]
+                password=request.POST["password"]
+                password2=request.POST["password2"]
+                employee_name=request.POST.get("employee_name")
+                print(employee_name)
+                error=""
+                if client_name=="":
+                    error="Client Name cannot be blank"
+                elif username=="":
+                    error="Client ID cannot be blank"
+                elif password=="":
+                    error="Set Password is blank, Please fill the form again"
+                elif password2=="":
+                    error="Confirm Password is blank, Please fill the form again"
+                elif employee_name=="":
+                    error="Employee Name cannot be blank."
+                if error!="":
+                    return render(request,'companylist.html',{"companies":companies,"employees":employees,"error":error})
+                if password!=password2:
+                    return render(request,'companylist.html',{"companies":companies,"employees":employees,"error":"Password entered while confirming is different"})
+                try:
+                    user = User.objects.create_user(username=username,password=password)
+                    Company.objects.create(user=user,name=client_name,point_of_contact=employee_name)
+                except:
+                    return render(request,'companylist.html',{"companies":companies,"employees":employees,"error":"Error while adding company, please try again"})
+            else:
+                try:
+                    Employee.objects.create(name=employeename)
+                except:
+                    return render(request,'companylist.html',{"companies":companies,"employees":employees,"error":"Error while adding employee, please try again"})
+        return render(request,'companylist.html',{"companies":companies,"employees":employees})
 
     else:
         return redirect('adminlogin')
 
+
+
 def updatelist(request,id):
     if request.user.is_authenticated and request.user.is_superuser:
         company = Company.objects.get(id=id)
-        print(company)
+        employees=Employee.objects.all()
+        #print(company)
         updates = Update.objects.filter(company__id=id).order_by("-id")
         sub_updates = UpdateWaste.objects.filter(update__company__id=id).order_by("-id")
-        for sub_update in sub_updates:
-            print(sub_update.id)
         wastepie = [['Waste','Carbon Emission Saved']]
         statuspie = [["Status","No. of Updates"]]
         from django.db.models import Count
@@ -147,12 +181,12 @@ def updatelist(request,id):
             if len(selected_waste)==0:
                 error="Fill at least one waste category"
             if error!="":
-                return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"error":error,"wastepie":wastepie,"statuspie":statuspie})
+                return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"employees":employees,"error":error,"wastepie":wastepie,"statuspie":statuspie})
             if status=="Completed":
                 for w in selected_waste:
                     x= request.POST.get(w[0]+"-quantityCE")
                     if x=="":
-                        return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"error":"Enter the C.E.S. for "+w[0],"wastepie":wastepie,"statuspie":statuspie})
+                        return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"employees":employees,"error":"Enter the C.E.S. for "+w[0],"wastepie":wastepie,"statuspie":statuspie})
                     else:
                         x=int(x)
                         selected_ces.append([w[0],x])
@@ -173,6 +207,8 @@ def updatelist(request,id):
                 for category,ces in selected_ces:
                     uw = UpdateWaste.objects.get(update=u,waste_category=category)
                     uw.carbon_emission_saved=ces
+                    uw.certificate=certificate
+                    uw.status=status
                     uw.save()
             wastepie = [['Waste','Carbon Emission Saved']]
             statuspie = [["Status","No. of Updates"]]
@@ -191,10 +227,26 @@ def updatelist(request,id):
             for key,value in wasteset.items():
                 wastepie.append([key,value])
             sub_updates = UpdateWaste.objects.filter(update__company__id=id).order_by("-id") 
-            return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"success":u.transaction_id+" added successfully","wastepie":wastepie,"statuspie":statuspie})
-        return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"wastepie":wastepie,"statuspie":statuspie})
+            return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"employees":employees,"success":u.transaction_id+" added successfully","wastepie":wastepie,"statuspie":statuspie})
+        return render(request,'updatelist.html',{"sub_updates":sub_updates,"company":company,"employees":employees,"wastepie":wastepie,"statuspie":statuspie})
     else:
         return redirect('adminlogin')
+
+def delete_detail(request,id):
+    waste=UpdateWaste.objects.get(id=id)
+    error=""
+    if request.method=="POST":
+        waste.delete()
+        error=waste.waste_category+ " "+"was deleted"
+        trc=UpdateWaste.objects.filter(update__company=waste.update.company)
+        print(trc)
+        if not trc:
+            particular_trc=waste.update
+            particular_trc.delete()
+        else:
+            pass
+        return render(request,'delete.html',{"waste":waste,"error":error})
+    return render(request,'delete.html',{"waste":waste,"error":error})
 
 def update_detail(request,id):
     if request.user.is_authenticated and request.user.is_superuser:
@@ -202,7 +254,7 @@ def update_detail(request,id):
         print(true_sub_update.waste_category)
         update = Update.objects.get(id=true_sub_update.update.id)
         sub_updates = UpdateWaste.objects.filter(update=update)
-
+        employees=Employee.objects.all()
         if request.method=="POST":
             error=""
             selected_waste = []
@@ -246,7 +298,7 @@ def update_detail(request,id):
                     else:
                         error="Enter the C.E.S amount of "+waste[0]
             if error!="":
-                return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates,"error":error})
+                return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates,"employees":employees,"error":error})
             """
             if state is not None and state!="":
                 update.state=state
@@ -276,8 +328,8 @@ def update_detail(request,id):
                     w=UpdateWaste.objects.get(waste_category=waste,update=update)
                     w.carbon_emission_saved=ces
                     w.save()
-            return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates,"true_sub_update":true_sub_update})
-        return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates,"true_sub_update":true_sub_update})
+            return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates,"employees":employees,"true_sub_update":true_sub_update})
+        return render(request,'update_detail.html',{"update":update,"sub_updates":sub_updates,"employees":employees,"true_sub_update":true_sub_update})
     else:
         return redirect('adminlogin')
 
@@ -312,6 +364,9 @@ def clientupdatedetail(request,id):
         true_sub_update=UpdateWaste.objects.get(id=id)
         update = Update.objects.get(id=true_sub_update.update.id)
         sub_updates = UpdateWaste.objects.filter(update__id=update.id)
+        if update.certificate:
+            for updates in sub_updates:
+                updates.certificate=update.certificate
         subwastepie = [["Category","Carbon Emission Saved"]]
         for i in sub_updates:
             if i.carbon_emission_saved is not None:
@@ -332,6 +387,7 @@ def downloadexcel(request,id):
         wb = xlwt.Workbook(encoding='utf-8')
 
         updates = Update.objects.filter(company=company)
+        """
         ws=wb.add_sheet("Transaction List")
         row_num = 0
         font_style=xlwt.XFStyle()
@@ -347,21 +403,21 @@ def downloadexcel(request,id):
             row_num+=1
             for col_num in range(len(row)):
                 ws.write(row_num,col_num,str(row[col_num]),font_style)
+        """
 
 
+        ws=wb.add_sheet(company.name)
+        row_num = 0
+        font_style=xlwt.XFStyle()
+        font_style.font.bold=True
 
-        for update in updates:
-            ws=wb.add_sheet(update.transaction_id)
-            row_num = 0
-            font_style=xlwt.XFStyle()
-            font_style.font.bold=True
-
-            columns = ['Transaction ID','Waste Category','Waste Quantity','City','Status']
-            for col_num in range(len(columns)):
-                ws.write(row_num,col_num,columns[col_num],font_style)
+        columns = ['Transaction ID','Waste Category','Waste Quantity','City','Status']
+        for col_num in range(len(columns)):
+            ws.write(row_num,col_num,columns[col_num],font_style)
             
-            font_style=xlwt.XFStyle()
-            rows=UpdateWaste.objects.filter(update__company__id=id,update__transaction_id=update.transaction_id).values_list('update__transaction_id','waste_category','waste_quantity','update__city','update__status')
+        font_style=xlwt.XFStyle()
+        for update in updates:
+            rows=UpdateWaste.objects.filter(update__company__id=id,update__transaction_id=update.transaction_id).values_list('update__transaction_id','waste_category','waste_quantity','update__city','status')
             for row in rows:
                 row_num+=1
                 for col_num in range(len(row)):
@@ -372,8 +428,88 @@ def downloadexcel(request,id):
     else:
         return redirect('clientlogin')
 
+def downloadexcel3(request):
+    import pandas as pd
+    if request.user.is_authenticated:
+        if request.method=="POST":
+            print("hi"+request.POST.get("month"))
+    #companies=Company.objects.all().values_list('name')
+    """
+        reqd_months_update_wastes=UpdateWaste.objects.filter(update__date_of_activity__month=8 , update__date_of_activity__year=2022)
+        company_name=reqd_months_update_wastes.values_list('update__transaction_id',flat=True)
+        transaction_ids=reqd_months_update_wastes.values_list('update__company__name',flat=True)
+        date = reqd_months_update_wastes.values_list('update__date_of_activity',flat=True)
+        waste_categories = reqd_months_update_wastes.values_list('waste_category',flat=True)
+        waste_quantity  = reqd_months_update_wastes.values_list('waste_quantity',flat=True)
+        total_waste=reqd_months_update_wastes.aggregate(Sum('waste_quantity'))['waste_quantity__sum']
+        df=pd.DataFrame()
+        df['TransactionID']=transaction_ids
+        df['Company Name']=company_name
+        df['Waste Category']=waste_categories
+        df['Waste Quantity']=waste_quantity
+        df['Date of Pickup']=date
+        df.loc[len(df.index)] = ["", "","",total_waste,""]
 
+        with BytesIO() as b:
+            # Use the StringIO object as the filehandle.
+            writer = pd.ExcelWriter(b, engine='xlsxwriter')
+            df.to_excel(writer, sheet_name='Sheet1')
+            writer.save()
+            # Set up the Http response.
+            filename = 'July.xlsx'
+            response = HttpResponse(
+                b.getvalue(),
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            return response
+            """
+    return HttpResponse("Hello")
 
+def downloadpage(request):
+    import pandas as pd
+    context={}
+    if request.method=="POST":
+        print("Hello")
+        month=request.POST.get("month")
+        year=request.POST.get("year")
+        error=""
+        if month=="" or month==None:
+            error="Please enter Month"
+        if year==""or year==None:
+            error="Please enter Year"
+        context={"error":error}
+        reqd_months_update_wastes=UpdateWaste.objects.filter(update__date_of_activity__month=int(month) , update__date_of_activity__year=int(year))
+        company_name=reqd_months_update_wastes.values_list('update__transaction_id',flat=True)
+        transaction_ids=reqd_months_update_wastes.values_list('update__company__name',flat=True)
+        date = reqd_months_update_wastes.values_list('update__date_of_activity',flat=True)
+        waste_categories = reqd_months_update_wastes.values_list('waste_category',flat=True)
+        waste_quantity  = reqd_months_update_wastes.values_list('waste_quantity',flat=True)
+        total_waste=reqd_months_update_wastes.aggregate(Sum('waste_quantity'))['waste_quantity__sum']
+        df=pd.DataFrame()
+        df['TransactionID']=transaction_ids
+        df['Company Name']=company_name
+        df['Waste Category']=waste_categories
+        df['Waste Quantity']=waste_quantity
+        df['Date of Pickup']=date
+        df.loc[len(df.index)] = ["", "","",total_waste,""]
+
+        with BytesIO() as b:
+            # Use the StringIO object as the filehandle.
+            writer = pd.ExcelWriter(b, engine='xlsxwriter')
+            df.to_excel(writer, sheet_name='Sheet1')
+            writer.save()
+            # Set up the Http response.
+            filename = str(year)+"-"+str(month)+'.xlsx'
+            response = HttpResponse(
+                b.getvalue(),
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            return response
+        return HttpResponse('Hi')
+        
+    return render(request,"download.html",context)
 
 # Random Update Generator Code :
     # import random

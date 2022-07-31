@@ -25,21 +25,37 @@ def get_upload_path(instance, filename):
     filename='{}.{}'.format("trc"+str(instance.id),ext)
     return os.path.join("client_%s" % instance.update.company, filename)
 
+def get_upload_path2(instance, filename):
+    ext = filename.split('.')[-1]
+    filename='{}.{}'.format("trc"+str(instance.id),ext)
+    return os.path.join("client_%s" % instance.company, filename)
+
+class Employee(models.Model):
+    name=models.CharField(max_length=255,null=True)
+    def __str__(self):
+        if self.name is not None:
+            return self.name
+        else:
+            return "hi"
+
 class Company(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     point_of_contact=models.CharField(max_length=255, default="Sharika Dhar", choices=EMPLOYEE_CHOICES)
+    #point_of_contact=models.ForeignKey(on_delete=models.CASCADE, default=Employee.objects.first())
+    total_waste=models.IntegerField(null=True,default=0)
+    e_waste=models.IntegerField(null=True,default=0)
     def __str__(self):
         return self.name
 
 class Update(models.Model):
     transaction_id = models.CharField(max_length=20)
     company = models.ForeignKey(Company,on_delete=models.CASCADE)
-    employee_name = models.CharField(max_length=200, default="Roocha", choices=EMPLOYEE_CHOICES)
+    employee_name = models.CharField(max_length=200, default="Roocha")
     district = models.CharField(max_length=200, default="Maharashtra")
     city = models.CharField(max_length=200, default="Mumbai")
     status = models.CharField(max_length=12,choices=STATUS_CHOICES)
-    certificate = models.ImageField(upload_to=get_upload_path,null=True,blank=True)
+    certificate = models.ImageField(upload_to=get_upload_path2,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=False,null=True)
     updated_at = models.DateTimeField(auto_now=True,  null=True)
     date_of_activity = models.DateField(auto_now_add=False, null=True)
@@ -87,6 +103,7 @@ class SocietyCollection(models.Model):
 
     def __str__(self):
         return str(self.society_name)+" - "+str(self.created_at)
+
 
 
 

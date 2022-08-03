@@ -103,9 +103,15 @@
                 <a style="text-decoration: none;position: center;" class="btn" href="{{true_sub_update.certificate.url}}" download="{{update.heading}}">DOWNLOAD</a>
             </div>
             {% else %}
-            <div class="inputfield">
-                <a style="text-decoration: none;position: center;cursor:not-allowed;" class="btn" >Not Uploaded Yet</a>
-            </div>
+                {% if update.certificate %}
+                <div class="inputfield">
+                    <a style="text-decoration: none;position: center;" class="btn" href="{{update.certificate.url}}" download="{{update.heading}}">DOWNLOAD</a>
+                </div>
+                {% else %}
+                <div class="inputfield">
+                    <a style="text-decoration: none;position: center;cursor:not-allowed;" class="btn" >Not Uploaded Yet</a>
+                </div>
+                {% endif %}
             {% endif %}
         </div>
         <div id="piechart" class="wrapperx">

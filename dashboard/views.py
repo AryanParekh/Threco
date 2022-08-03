@@ -15,6 +15,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Sum
+import pandas as pd
 # Create your views here.
 
 WASTES = ["E Waste","Plastic","Paper","Metal","Others"]
@@ -215,7 +216,7 @@ def updatelist(request,id):
                 for category,ces in selected_ces:
                     uw = UpdateWaste.objects.get(update=u,waste_category=category)
                     uw.carbon_emission_saved=ces
-                    uw.certificate=certificate
+                    #uw.certificate=certificate
                     uw.status=status
                     uw.save()
             wastepie = [['Waste','Carbon Emission Saved']]
@@ -375,6 +376,7 @@ def clientupdatedetail(request,id):
         if update.certificate:
             for updates in sub_updates:
                 updates.certificate=update.certificate
+                updates.save()
         subwastepie = [["Category","Carbon Emission Saved"]]
         for i in sub_updates:
             if i.carbon_emission_saved is not None:
@@ -437,7 +439,6 @@ def downloadexcel(request,id):
         return redirect('clientlogin')
 
 def downloadexcel3(request):
-    import pandas as pd
     if request.user.is_authenticated:
         if request.method=="POST":
             print("hi"+request.POST.get("month"))

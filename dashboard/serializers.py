@@ -23,4 +23,5 @@ class SocietyCollectionSerializer(serializers.ModelSerializer):
             "e_waste",
             "hazardous_waste",
             "other_waste",
+            "date_of_activity",
         ]

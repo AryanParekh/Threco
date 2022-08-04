@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+  <link rel="stylesheet" href="{% static 'css/table.css' %}">
+  <link rel="stylesheet" href="{% static 'css/delete.css' %}">
+  </head>
+  <body>
+  <div id="wrap" class="folder">
+    <div class="container">
+    {% ifequal error '' %}
+    <h1>Are you sure you want to delete? </h1>
+                <!-- <h2><b>{{company.name}}</b></h2> -->
+                <table class="table table-fluid" id="myTable">
+                <thead>
+                <tr>
+                   <th>Transaction ID</th>
+                   <th>Waste Category</th>
+                   <th>Waste Quantity</th>
+                   <th>City</th>
+                   <th>Status</th>
+                   <th>Date of Activity</th>
+               </tr>
+                </thead>
+                <tbody>
+                <td data-label="Transaction ID">{{waste.update.transaction_id}}</td>
+                    <td data-label="Waste Category">{{waste.waste_category}}</td>
+                    <td data-label="Waste Quantity">{{waste.waste_quantity}}</td>
+                    <td data-label="City">{{waste.update.city}}</td>
+                    <td data-label="Status">{{waste.status}}</td>
+                    <td data-label="Date of Activity">{{waste.update.date_of_activity}}</td>
+                </tbody>
+                </table>
+        </div>
+        {% else %}
+        <h2>{{ error }}</h2>
+    {% endifequal %}
+        </div class="contain">
+                <form method="post" class="form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputfield">
+                {% ifequal error '' %}
+                <button class="delete"> Delete</button>
+                <br>
+                {% else %}
+                <a class="delete" href="{% url 'updatelist' waste.update.company.id %}">  
+                Transaction List
+                </a>
+                {% endifequal %}
+             </div>
+            </form>
+  </body>
+</html>

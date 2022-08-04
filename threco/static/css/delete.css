@@ -1,0 +1,29 @@
+.delete {
+    font: bold 15px Arial;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 5px solid #CCCCCC;
+    border-right: 5px solid #333333;
+    border-bottom: 5px solid #333333;
+    border-left: 5px solid #CCCCCC;
+    margin-left: 370px;
+  }
+
+.contain {
+    text-align: center;
+}
+
+.delete2 {
+    font: bold 15px Arial;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
+    margin-left: 5px;
+  }

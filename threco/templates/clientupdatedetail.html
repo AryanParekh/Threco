@@ -50,31 +50,39 @@
                 <label><b style="color:#074c74;">Waste Details</b></label>
                 <div style="display: flex;"  class="input">
                     <p style="margin-right: 2px;" class="input"><b>Category</b></p>
-                    <p style="margin-right: 2px;" class="input"><b>Quantity</b></p>
+                    <p style="margin-right: 2px;" class="input"><b>Quantities</b></p>
                     <p class="input"><b>C.E.S.</b></p>
                 </div>
             </div>
-            {% for sub_update in sub_updates %}
+            {% comment %} {% for sub_update in sub_updates %} {% endcomment %}
             <div class="inputfield">
                 <label></label>
                 <div style="display: flex;"  class="input">
-                <p style="margin-right: 2px;" class="input"><span style="color: #0369a5;"><b>{{sub_update.waste_category}}</b></span></p>
-                <p style="margin-right: 2px;" class="input">{{sub_update.waste_quantity}}</p>
-                <p class="input">{{sub_update.carbon_emission_saved}}</p>
+                <p style="margin-right: 2px;" class="input"><span style="color: #0369a5;"><b>{{true_sub_update.waste_category}}</b></span></p>
+                <p style="margin-right: 2px;" class="input">{{true_sub_update.waste_quantity}}</p>
+                <p class="input">{{true_sub_update.carbon_emission_saved}}</p>
                 </div>
             </div>
-            {% endfor %}
+            {% comment %} {% endfor %} {% endcomment %}
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Employee Name</b></label>
+                <p class="input">{{update.employee_name}}</p>
+            </div>
             <div class="inputfield">
                 <label><b style="color:#074c74;">Location</b></label>
-                <p class="input">{{update.state}} - {{update.district}}</p>
+                <p class="input">{{update.city}}</p>
             </div>
             <div class="inputfield">
                 <label><b style="color:#074c74;">Status</b></label>
-                <p class="input">{{update.status}}</p>
+                <p class="input">{{true_sub_update.status}}</p>
             </div>
             <div class="inputfield">
-                <label><b style="color:#074c74;">Created At</b></label>
-                <p class="input">{{update.created_at}}</p>
+                <label><b style="color:#074c74;">Status</b></label>
+                <p class="input">{{true_sub_update.status}}</p>
+            </div>
+            <div class="inputfield">
+                <label><b style="color:#074c74;">Waste Category</b></label>
+                <p class="input">{{true_sub_update.waste_category}}</p>
             </div>
             <div class="inputfield">
                 <label><b style="color:#074c74;">Updated At</b></label>
@@ -90,14 +98,20 @@
         <div id="certificate" class="wrapperx" style="width: 100%!important;">
             <h3>Click Here to download the certificate</h3>
             <br>
-            {% if update.certificate %}
+            {% if true_sub_update.certificate %}
             <div class="inputfield">
-                <a style="text-decoration: none;position: center;" class="btn" href="{{update.certificate.url}}" download="{{update.heading}}">DOWNLOAD</a>
+                <a style="text-decoration: none;position: center;" class="btn" href="{{true_sub_update.certificate.url}}" download="{{update.heading}}">DOWNLOAD</a>
             </div>
             {% else %}
-            <div class="inputfield">
-                <a style="text-decoration: none;position: center;cursor:not-allowed;" class="btn" >Not Uploaded Yet</a>
-            </div>
+                {% if update.certificate %}
+                <div class="inputfield">
+                    <a style="text-decoration: none;position: center;" class="btn" href="{{update.certificate.url}}" download="{{update.heading}}">DOWNLOAD</a>
+                </div>
+                {% else %}
+                <div class="inputfield">
+                    <a style="text-decoration: none;position: center;cursor:not-allowed;" class="btn" >Not Uploaded Yet</a>
+                </div>
+                {% endif %}
             {% endif %}
         </div>
         <div id="piechart" class="wrapperx">

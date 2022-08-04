@@ -8,6 +8,7 @@
     <title>{{company.name}} Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static 'css/popupform.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/delete.css' %}">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <meta charset="utf-8" />
@@ -53,16 +54,17 @@
     </script>
   </head>
   <body>
-    <div id="id01" class="modal">
-      <div class="wrapperx2">
+    <div id="id01" class="modal" >
+      <div class="wrapperx2" >
         <div class="wrapperx">
           <span onclick="zindexchanger2()" class="close-span">
             <i class="fa fa-times" aria-hidden="true"></i>
           </span>
-          <div class="title">
-            Add an Update
-          </div>
+            <div class="title">
+              Add an Update
+            </div>
           <form method="post" class="form" enctype="multipart/form-data">
+          <div style= "height:500px; overflow-y: scroll;">
             {% csrf_token %}
             <div class="inputfield4">
               <label style="width: 50%;">
@@ -124,10 +126,33 @@
               </div>
             </div>
             <div class="inputfield" id="selection">
-              <label>Location</label>
+              <label>City</label>
               <div style="display: flex;margin:0;width: 100%;">
-                <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
-                <div class="custom_select"><select name="district" id='secondlist'></select></div>
+                <input id="city" name="city" type="text" onchange="updateces(this)" />
+                {% comment %} <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
+                <div class="custom_select"><select name="district" id='secondlist'></select></div> {% endcomment %}
+              </div>
+            </div>
+            <div class="inputfield" id="selection">
+              <label>Date Of Activity</label>
+              <div style="display: flex;margin:0;width: 100%;">
+                <input id="date_of_activity" name="date_of_activity" type="date"
+                placeholder="yyyy-mm-dd" 
+                onchange="updateces(this)" >
+      
+                {% comment %} <div style="margin-right: 5px;" class="custom_select"><select name ="state" id="listBox" onchange='selct_district(this.value)'></select></div>
+                <div class="custom_select"><select name="district" id='secondlist'></select></div> {% endcomment %}
+              </div>
+            </div>
+            <div class="inputfield">
+              <label>Employee Name</label>
+              <div class="custom_select">
+                <select id="employee_name" name="employee_name">
+                  <option value="">Select</option>
+                  {% for employee in employees %}
+                  <option value="{{employee.name}}">{{employee.name}}</option>
+                  {% endfor %}
+                </select>
               </div>
             </div>
             <div class="inputfield">
@@ -144,12 +169,13 @@
                 <label>Carbon Emission Saved</label>
                 <input id="ces" name="ces" type="text" class="input" disabled>
             </div>  -->
-            <div class="inputfield">
+             <div class="inputfield">
               <label>Certificate</label>
               <input id="certificate" name="certificate" type="file" class="input" disabled>
             </div>
             <div class="inputfield">
               <button id="submitbtn" type="submit" value="Register" class="btn">SUBMIT</button>
+            </div>
             </div>
           </form>
         </div>
@@ -202,27 +228,36 @@
                    <th>Transaction ID</th>
                    <th>Waste Category</th>
                    <th>Waste Quantity</th>
-                   <th>State</th>
+                   <th>City</th>
                    <th>District</th>
                    <th>Status</th>
-                   <th>Created At</th>
+                   <th>Date of Activity</th>
+                   <th>Employee Name</th>
+                   <th>Recycling Percentage</th>
+                   <th>Delete</th>
                </tr>
                 </thead>
                 <tbody>
                     {% for sub_update in sub_updates %}
                     <tr>
-                    <td data-label="Sr.No"><a href="{% url 'update_detail' sub_update.update.id %}">{{forloop.counter}}</a></td>
-                    <td data-label="Transaction ID"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.update.transaction_id}}</a></td>
-                    <td data-label="Waste Category"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.waste_category}}</a></td>
-                    <td data-label="Waste Quantity"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.waste_quantity}}</a></td>
-                    <td data-label="State"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.update.state}}</a></td>
-                    <td data-label="District"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.update.district}}</a></td>
-                    {% ifequal sub_update.update.status 'Completed' %}
-                    <td data-label="Status"><a style="color: green;" href="{% url 'update_detail' sub_update.update.id %}"><b>{{sub_update.update.status}}</b></a></td>
+                    <td data-label="Sr.No"><a href="{% url 'update_detail' sub_update.id %}">{{forloop.counter}}</a></td>
+                    <td data-label="Transaction ID"><a href="{% url 'update_detail' sub_update.id %}">{{sub_update.update.transaction_id}}</a></td>
+                    <td data-label="Waste Category"><a href="{% url 'update_detail' sub_update.id %}">{{sub_update.waste_category}}</a></td>
+                    <td data-label="Waste Quantity"><a href="{% url 'update_detail' sub_update.id %}">{{sub_update.waste_quantity}}</a></td>
+                    <td data-label="City"><a href="{% url 'update_detail' sub_update.id %}">{{sub_update.update.city}}</a></td>
+                    <td data-label="District"><a href="{% url 'update_detail' sub_update.id %}">{{sub_update.update.district}}</a></td>
+                    {% ifequal sub_update.status 'Completed' %}
+                    <td data-label="Status"><a style="color: green;" href="{% url 'update_detail' sub_update.id %}"><b>{{sub_update.status}}</b></a></td>
                     {% else %}
-                    <td data-label="Status"><a style="color: red;" href="{% url 'update_detail' sub_update.update.id %}"><b>{{sub_update.update.status}}</b></a></td>
+                    <td data-label="Status"><a style="color: red;" href="{% url 'update_detail' sub_update.id %}"><b>{{sub_update.status}}</b></a></td>
                     {% endifequal %}
-                    <td data-label="Created At"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.update.created_at.date|date:"d-m-Y"}}</a></td>
+                    <td data-label="Created At"><a href="{% url 'update_detail' sub_update.id %}">{{sub_update.update.date_of_activity}}</a></td>
+                    <td data-label="Employee Name"><a href="{% url 'update_detail' sub_update.id %}">{{sub_update.update.employee_name}}</a></td>
+                    <td data-label="Recycling Percentage"><a href="{% url 'update_detail' sub_update.update.id %}">{{sub_update.recycling_percentage}}%</a></td>
+                    <td><a style="text-decoration: none;" href="{% url 'delete_detail' sub_update.id %}">
+                    <button class="delete2" style="padding:5px" >Delete</button>
+                    </a>
+                    </td>
                     </tr>
                     {% endfor %}
                 </tbody>
